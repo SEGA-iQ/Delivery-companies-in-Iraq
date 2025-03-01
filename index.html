@@ -1,40 +1,1189 @@
 <!DOCTYPE html>
-<html lang="ar">
-<head><link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="styles.css">
+<html lang="ar" dir="rtl">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دلفري العراق</title>
+    <title>دلفري العراق | خدمة توصيل موثوقة</title>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cairo&display=swap">
-</head><link rel="stylesheet" href="styles.css">
-<body>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #17a2b8;
+            --accent-color: #ffc107;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --text-color: #333;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4ecf7 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            direction: rtl;
+            text-align: right;
+            padding-bottom: 30px;
+            position: relative;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header and Announcement Bar */
+        #maintenanceMessage {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-weight: 500;
+            border-radius: 0 0 15px 15px;
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 9999;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* Logo Styling */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 60px;
+        }
+
+        .site-logo {
+            width: 120px;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: var(--shadow);
+            border: 4px solid white;
+            transition: transform 0.3s ease;
+        }
+
+        .site-logo:hover {
+            transform: scale(1.05);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            position: absolute;
+            bottom: -10px;
+            left: 20%;
+        }
+
+        /* Form Styling */
+        #loginContainer, #orderContainer {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-top: 80px;
+            transition: var(--transition);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: var(--transition);
+            background-color: #f9f9f9;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+            outline: none;
+            background-color: white;
+        }
+
+        input[readonly] {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 13px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* Button Styling */
+        button {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 10px;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Restaurant Name Styling */
+        .restaurant-name {
+            font-size: 24px;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Menu & Navigation */
+        #menuToggle {
+            position: fixed;
+            top: 65px;
+            right: 20px;
+            z-index: 1000;
+            background-color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        #menuToggle:hover {
+            transform: scale(1.1);
+        }
+
+        #sideMenu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            padding: 30px 20px;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        #sideMenu.open {
+            right: 0;
+        }
+
+        #sideMenu h4 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        #sideMenu button {
+            background: white;
+            color: var(--dark-color);
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        #sideMenu button:hover {
+            background: #f8f9fa;
+            border-color: #ccc;
+            transform: translateY(-2px);
+        }
+
+        #sideMenu #clearServiceFeeTotal {
+            background: var(--primary-color);
+            color: white;
+            margin-top: 15px;
+        }
+
+        #sideMenu #logoutBtn {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        #closeSideMenu {
+            background: var(--danger-color) !important;
+            color: white !important;
+        }
+
+        /* Modal Styling */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        #confirmationModal .modal-content p {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        #confirmationModal button {
+            width: 45%;
+            margin: 0 5px;
+        }
+
+        #confirmLogoutBtn {
+            background: var(--danger-color);
+        }
+
+        #cancelLogoutBtn {
+            background: var(--dark-color);
+        }
+
+        /* Orders Modal - محسنة للهواتف المحمولة */
+        .orders-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            touch-action: pan-y; /* Allow vertical touch scrolling */
+        }
+
+        .orders-modal-content {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 95%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch; /* Improve scrolling on iOS devices */
+            padding: 20px;
+            position: relative;
+            touch-action: pan-y pinch-zoom; /* تمكين التمرير الرأسي وتكبير/تصغير على الأجهزة اللمسية */
+        }
+
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .orders-modal h3 {
+            text-align: center;
+            margin: 0;
+            color: var(--primary-color);
+            flex: 1;
+            font-size: 1.3rem;
+        }
+
+        .orders-search {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            max-width: 300px;
+            margin: 10px 0;
+        }
+
+        .orders-search input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            font-size: 14px;
+        }
+
+        .orders-search button {
+            padding: 8px 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            margin: 0;
+            width: auto;
+        }
+
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .orders-summary {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            gap: 10px;
+        }
+
+        .summary-item {
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            flex: 1;
+            min-width: 110px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .summary-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-item span:first-child {
+            font-weight: 500;
+            color: var(--dark-color);
+            margin-left: 5px;
+            display: block;
+            font-size: 13px;
+        }
+
+        .summary-item span:last-child {
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: none; /* إزالة الارتفاع الأقصى لتسهيل التمرير */
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            touch-action: pan-x pan-y; /* تمكين التمرير في جميع الاتجاهات */
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            width: auto;
+            min-width: 120px;
+        }
+
+        .export-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .export-btn:hover {
+            background-color: #218838;
+        }
+
+        /* Service Fee Display */
+        #serviceFeeTotalContainer {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            min-width: 300px;
+        }
+
+        #serviceFeeTotal {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 15px 0;
+        }
+
+        /* Success & Error Messages */
+        #successMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--success-color);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            animation: fadeIn 0.5s ease;
+        }
+
+        #errorMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff5f5;
+            color: var(--danger-color);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            border-left: 5px solid var(--danger-color);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Loading Indicator */
+        #loadingIndicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--primary-color);
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        /* DataTables Customization */
+        .dataTables_wrapper {
+            padding: 10px 0;
+        }
+
+        table.dataTable {
+            border-collapse: collapse !important;
+            width: 100% !important;
+        }
+
+        table.dataTable thead th {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom: none !important;
+            text-align: center;
+        }
+
+        table.dataTable tbody td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        table.dataTable tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table.dataTable tbody tr:hover {
+            background-color: #f0f6ff;
+        }
+
+        /* Secret Code Modal */
+        #secretCodeModal {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px solid #ddd;
+        }
+
+        #secretCodeModal input {
+            margin-bottom: 15px;
+        }
+
+        #secretCodeModal button {
+            width: 48%;
+            display: inline-block;
+            margin: 0 1%;
+        }
+
+        /* تنسيقات Select2 */
+        .select2-container--default .select2-selection--single {
+            height: 46px;
+            padding: 8px 10px;
+            font-size: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 44px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 28px;
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: var(--primary-color);
+        }
+
+        .select2-container--open .select2-dropdown--below {
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .select2-search--dropdown .select2-search__field {
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        /* سجل الطلبات المحسن */
+        .orders-modal-content {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .orders-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin: -20px -20px 20px -20px;
+            position: sticky;
+            top: -20px;
+            z-index: 10;
+        }
         
-    <!-- رسالة الصيانة -->
-    <div id="maintenanceMessage" style="display: none; position: fixed; top: 0; left: 0; width: 100%; background-color: #28a745; color: #fff; text-align: center; padding: 8px; font-weight: bold; font-size: 1em; border-bottom: 2px solid #fff; z-index: 9999; border-radius: 0 0 10px 10px;">
-        <p style="margin: 0;">مرحبا بك في دلفري العراق! <br> أسرع خدمة توصيل موثوقة في بغداد.</p>
+        .floating-close-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--danger-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: none;
+            cursor: pointer;
+            z-index: 2000;
+            font-size: 18px;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        
+        .floating-close-btn:hover {
+            transform: scale(1.1);
+            background: #bd2130;
+        }
+
+        .orders-header h3 {
+            color: white;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .modal-tools {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .orders-search {
+            display: flex;
+            max-width: 300px;
+            width: 100%;
+            border-radius: 50px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .orders-search input {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 14px;
+        }
+
+        .orders-search input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .orders-search button {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 40px;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .orders-search button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-dropdown {
+            position: relative;
+        }
+
+        .filter-dropdown button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+            width: auto;
+            margin: 0;
+        }
+
+        .filter-dropdown button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .filter-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+            padding: 10px 0;
+            min-width: 200px;
+            display: none;
+        }
+
+        .filter-option {
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-option:hover {
+            background: #f1f1f1;
+            color: var(--primary-color);
+        }
+
+        .orders-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 86, 179, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 12px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .summary-info {
+            flex: 1;
+        }
+
+        .summary-count {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            font-size: 0.8rem;
+            color: #777;
+        }
+        
+        .smaller-card {
+            transform: scale(0.85);
+        }
+        
+        .smaller-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+        }
+        
+        .smaller-count {
+            font-size: 1rem;
+        }
+        
+        .smaller-label {
+            font-size: 0.7rem;
+        }
+        
+        .close-header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        .close-header-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .active-filter {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        #currentFilter {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .table-responsive {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+        table.dataTable {
+            margin: 0 !important;
+        }
+
+        table.dataTable thead th {
+            background: #f1f5f9;
+            color: var(--dark-color);
+            font-weight: 600;
+            border: none;
+            padding: 12px 15px;
+        }
+
+        table.dataTable tbody td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            width: auto;
+        }
+
+        .export-btn {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .print-btn {
+            background: var(--accent-color);
+            color: var(--dark-color);
+        }
+
+        .close-btn {
+            background: #eee;
+            color: var(--dark-color);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .export-btn:hover {
+            background: #218838;
+        }
+
+        .print-btn:hover {
+            background: #e0a800;
+        }
+
+        .close-btn:hover {
+            background: #ddd;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            #loginContainer, #orderContainer {
+                padding: 20px;
+            }
+
+            .orders-modal-content {
+                padding: 15px;
+                width: 98%;
+            }
+
+            .orders-header {
+                flex-direction: column;
+            }
+
+            .orders-search {
+                max-width: 100%;
+                margin-top: 10px;
+            }
+
+            .summary-item {
+                flex: 0 0 45%;
+                min-width: 100px;
+                padding: 8px 10px;
+            }
+
+            .tab {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+
+            table.dataTable th, table.dataTable td {
+                padding: 8px 5px;
+                font-size: 13px;
+            }
+
+            .dataTables_length, 
+            .dataTables_filter {
+                text-align: right;
+                margin-bottom: 10px;
+                float: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .summary-item {
+                flex: 0 0 100%;
+            }
+
+            #maintenanceMessage {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .orders-modal-content {
+                padding: 10px;
+            }
+
+            .orders-modal h3 {
+                font-size: 1.1rem;
+            }
+
+            .orders-search input {
+                font-size: 13px;
+            }
+
+            /* تحسين عرض الجدول على الهواتف الصغيرة جدا */
+            table.dataTable {
+                display: block;
+                width: 100%;
+            }
+
+            table.dataTable thead, 
+            table.dataTable tbody, 
+            table.dataTable th, 
+            table.dataTable td, 
+            table.dataTable tr {
+                display: block;
+            }
+
+            table.dataTable thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            table.dataTable tbody tr {
+                border: 1px solid #ddd;
+                margin-bottom: 10px;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            }
+
+            table.dataTable td {
+                position: relative;
+                padding-left: 40%;
+                text-align: right;
+                min-height: 30px;
+                border-bottom: 1px solid #eee;
+            }
+
+            table.dataTable td:before {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: 35%;
+                white-space: nowrap;
+                font-weight: bold;
+            }
+
+            /* تعريف العناوين للعرض المتغير */
+            table.dataTable td:nth-of-type(1):before { content: "رقم الزبون:"; }
+            table.dataTable td:nth-of-type(2):before { content: "المنطقة:"; }
+            table.dataTable td:nth-of-type(3):before { content: "السعر:"; }
+            table.dataTable td:nth-of-type(4):before { content: "سعر الطلب:"; }
+            table.dataTable td:nth-of-type(5):before { content: "رسوم الخدمة:"; }
+            table.dataTable td:nth-of-type(6):before { content: "ملاحظة:"; }
+            table.dataTable td:nth-of-type(7):before { content: "التاريخ:"; }
+        }
+    </style>
+</head>
+<body>
+    <!-- رسالة الترحيب -->
+    <div id="maintenanceMessage" class="animate__animated animate__fadeIn">
+        <p><i class="fas fa-car-side"></i> مرحبا بك في دلفري العراق! <br> أسرع خدمة توصيل موثوقة في بغداد <i class="fas fa-medal"></i></p>
     </div>
 
     <!-- صفحة تسجيل الدخول -->
     <div class="container" id="loginContainer">
-        <div class="logo-container">
-            <img src="logo.png" alt="Logo" class="site-logo">
+        <div class="logo-container animate__animated animate__zoomIn">
+            <img src="logo.png" alt="دلفري العراق" class="site-logo">
         </div>
 
-        <h2>دلفري العراق</h2>
-        <div class="form-group">
-            <label for="email">البريد الإلكتروني:</label>
+        <h2 class="animate__animated animate__fadeIn">دلفري العراق</h2>
+        <div class="form-group animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+            <label for="email"><i class="fas fa-envelope"></i> البريد الإلكتروني:</label>
             <input type="email" id="email" name="email" placeholder="أدخل بريدك الإلكتروني هنا">
             <span id="emailError" class="error-message"></span>
         </div>
-        <div class="form-group">
-            <label for="password">كلمة المرور:</label>
+        <div class="form-group animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+            <label for="password"><i class="fas fa-lock"></i> كلمة المرور:</label>
             <input type="password" id="password" name="password" placeholder="أدخل كلمة المرور الخاصة بك">
             <span id="passwordError" class="error-message"></span>
         </div>
-        <button id="loginBtn">تسجيل الدخول</button>
+        <button id="loginBtn" class="animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+            <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+        </button>
     </div>
 
     <!-- صفحة طلب السائق -->
@@ -42,12 +1191,14 @@
         <div class="container">
             <div class="form-row">
                 <div class="col-12 text-center">
-                    <div id="restaurantName" class="restaurant-name">دلفري العراق</div>
+                    <div id="restaurantName" class="restaurant-name animate__animated animate__fadeIn">
+                        <i class="fas fa-utensils"></i> دلفري العراق
+                    </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="location">اسم المنطقة:</label>
+                <label for="location"><i class="fas fa-map-marker-alt"></i> اسم المنطقة:</label>
                 <select id="location" name="location">
                     <option value="">اختر المنطقة</option>
                 </select>
@@ -55,153 +1206,228 @@
             </div>
 
             <div class="form-group">
-                <label for="price">أجرة السائق:</label>
+                <label for="price"><i class="fas fa-dollar-sign"></i> أجرة السائق:</label>
                 <input type="text" id="price" name="price" readonly placeholder="أجرة السائق سيتم تحديده تلقائيًا">
                 <span id="priceError" class="error-message"></span>
             </div>
 
             <div class="form-group">
-                <label for="customerNumber">رقم الزبون:</label>
+                <label for="customerNumber"><i class="fas fa-phone"></i> رقم الزبون:</label>
                 <input type="text" id="customerNumber" name="customerNumber" placeholder="07×××××××××">
                 <span id="customerNumberError" class="error-message"></span>
             </div>
 
             <div class="form-group">
-                <label for="orderPrice">سعر الطلب:</label>
+                <label for="orderPrice"><i class="fas fa-shopping-cart"></i> سعر الطلب:</label>
                 <input type="text" id="orderPrice" name="orderPrice" placeholder="أدخل سعر الطلب">
                 <span id="orderPriceError" class="error-message"></span>
             </div>
 
             <div class="form-group">
-                <label for="orderLastFourDigits">رقم الطلب:</label>
-                <input type="text" id="orderLastFourDigits" name="orderLastFourDigits" placeholder="آخر 4 أرقام من الطلب">
-                <span id="orderLastFourDigitsError" class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-                <label for="note">اسم المنطقة:</label>
-                <input type="text" id="note" name="note" placeholder=" مثل:اكتب اسم المنطقة و الوقت الذي يريد ان يستلم به الزبون الطلب ">
+                <label for="note"><i class="fas fa-sticky-note"></i> ملاحظة:</label>
+                <input type="text" id="note" name="note" placeholder="مثل: طلب جاهز أو بعد 10 دقائق يجهز">
                 <span id="noteError" class="error-message"></span>
             </div>
 
             <div class="form-group">
-                <label for="serviceFee">رسوم الخدمة:</label>
+                <label for="serviceFee"><i class="fas fa-hand-holding-usd"></i> رسوم الخدمة:</label>
                 <input type="text" id="serviceFee" name="serviceFee" readonly value="500 دينار">
             </div>
 
-            <button id="submitOrder">طلب السائق</button>
-
-            <!-- أزرار إضافية (تم إزالتها) -->
-        </div>
-        
-         <!-- زر الثلاث خطوط -->
-    <div id="menuToggle" style="position: fixed; top: 10px; right: 10px; cursor: pointer; z-index: 1000;">
-        <img src="menu-icon.png" alt="Menu" style="width: 30px; height: 30px;">
-    </div>
-
-    <!-- نافذة الأزرار -->
-    <div id="sideMenu" style="display: none; position: fixed; top: 0; right: 0; width: 200px; height: 100%; background-color: #fff; box-shadow: -2px 0 5px rgba(0,0,0,0.5); z-index: 1001; padding: 20px;">
-        <h4>دلفري العراق</h4>
-        <button id="showOrders" class="btn btn-secondary btn-block">عرض سجل الطلبات</button>
-        <button id="showServiceFee" class="btn btn-secondary btn-block">عرض مجموع رسوم الخدمة</button>
-        <button id="logoutBtn" class="btn btn-secondary btn-block">تسجيل خروج من الحساب</button>
-        <button id="closeSideMenu" class="btn btn-danger btn-block" style="margin-top: 10px;">اغلاق النافذة</button>
-        
-        <!-- زر مسح مجموع رسوم الخدمة -->
-        <button id="clearServiceFeeTotal" class="btn" style="background-color: rgb(0, 75, 160); color: rgb(255, 255, 255);">دخول مندوب الشركة</button>
-        <!-- حقل إدخال الرقم السري في مربع حوار -->
-<div id="secretCodeModal" style="display: none;">
-    <input type="text" id="secretCode" placeholder="أدخل الرقم السري" />
-    <button id="confirmClearServiceFee" class="btn btn-primary">تأكيد</button>
-    <button id="cancelClearServiceFee" class="btn btn-secondary">إلغاء</button>
-
-       </div>
-</div>
-
-
-</div>
-
-    </div> 
-    
-        <!-- عنصر لعرض مجموع رسوم الخدمة -->
-        <div id="serviceFeeTotalContainer" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; padding: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); border-radius: 12px; text-align: center; z-index: 1000;">
-            <h4 style="margin-bottom: 15px; font-family: 'Cairo', sans-serif; font-size: 18px; color: #333;">مجموع رسوم الخدمة</h4>
-            <p id="serviceFeeTotal" style="font-family: 'Cairo', sans-serif; font-size: 16px; color: #007bff; margin-bottom: 20px;">0 دينار</p>
-            <button id="closeServiceFee" style="background-color: #ff4d4d; color: white; border: none; padding: 5px 10px; font-size: 14px; border-radius: 5px; cursor: pointer; width: auto; text-align: center;">اغلاق</button>
+            <button id="submitOrder">
+                <i class="fas fa-motorcycle"></i> طلب السائق
+            </button>
         </div>
 
+        <!-- زر القائمة -->
+        <div id="menuToggle" class="animate__animated animate__fadeIn" style="animation-delay: 0.5s">
+            <i class="fas fa-bars fa-lg"></i>
+        </div>
 
-        <div class="orders-modal" id="ordersModal" style="display:none;">
-            <h3>سجل الطلبات</h3>
-            <div class="orders-summary">
-                <div class="summary-item"><span>إجمالي الطلبات:</span> <span id="totalOrders">0</span></div>
-                <div class="summary-item"><span>طلبات اليوم:</span> <span id="todayOrders">0</span></div>
-                <div class="summary-item"><span>طلبات الأسبوع:</span> <span id="weeklyOrders">0</span></div>
-                <div class="summary-item"><span>طلبات الشهر:</span> <span id="monthlyOrders">0</span></div>
+        <!-- القائمة الجانبية -->
+        <div id="sideMenu">
+            <h4><i class="fas fa-car-side"></i> دلفري العراق</h4>
+            <button id="showOrders" class="btn btn-block">
+                <i class="fas fa-history"></i> عرض سجل الطلبات
+            </button>
+            <button id="showServiceFee" class="btn btn-block">
+                <i class="fas fa-money-bill-wave"></i> عرض مجموع رسوم الخدمة
+            </button>
+            <button id="logoutBtn" class="btn btn-block">
+                <i class="fas fa-sign-out-alt"></i> تسجيل خروج من الحساب
+            </button>
+            <button id="closeSideMenu" class="btn btn-block">
+                <i class="fas fa-times"></i> اغلاق النافذة
+            </button>
+
+            <!-- زر مسح مجموع رسوم الخدمة -->
+            <button id="clearServiceFeeTotal" class="btn btn-block">
+                <i class="fas fa-user-shield"></i> دخول مندوب الشركة
+            </button>
+
+            <!-- حقل إدخال الرقم السري -->
+            <div id="secretCodeModal" style="display: none;">
+                <input type="password" id="secretCode" placeholder="أدخل الرقم السري" />
+                <button id="confirmClearServiceFee" class="btn">
+                    <i class="fas fa-check"></i> تأكيد
+                </button>
+                <button id="cancelClearServiceFee" class="btn">
+                    <i class="fas fa-times"></i> إلغاء
+                </button>
             </div>
-            <table id="ordersTable" class="display" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>رقم الزبون</th>
-                        <th>المنطقة</th>
-                        <th>السعر</th>
-                        <th>سعر الطلب</th>
-                        <th>رسوم الخدمة</th>
-                        <th>ملاحظة</th>
-                        <th>رقم الطلب</th>
-                        <th>التاريخ</th>
-                    </tr>
-                </thead>
-                <tbody id="ordersList"></tbody>
-               </table>
-               <button class="close-modal" id="closeModal">إغلاق</button>
-           </div>
-       </div>
-
-    <button id="clearServiceFee" class="btn btn-danger" style="display:none;">مسح مجموع رسوم الخدمة</button>
-    <button id="clearOrders" class="btn btn-danger" style="display:none;">مسح سجل الطلبات</button>
-
-    <div id="successMessage" style="display:none;">تم استلام طلبك، سوف يصل السائق 10 دقائق أو أقل.</div>
-    <div id="errorMessage" style="display:none; background-color: #f3f1f1b9; color: #ff0c24; padding: 20px; border: 1px solid #f5c6cb; border-radius: 8px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; max-width: 400px; text-align: center;">
-        <span id="errorText">حدث خطأ بسبب عدم اتصالك بالإنترنت أو غيرها. لم يتم إرسال الطلب. يرجى المحاولة مرة أخرى.</span>
-        <button id="closeErrorMessage" onclick="hideErrorMessage()" style="margin-top: 15px; background-color: #ff2e2e; border: none; color: #ffffff; cursor: pointer; padding: 5px 10px; border-radius: 5px;">إغلاق</button>
+        </div>
     </div>
 
+    <!-- عنصر لعرض مجموع رسوم الخدمة -->
+    <div id="serviceFeeTotalContainer" style="display: none;">
+        <h4><i class="fas fa-money-bill-wave"></i> مجموع رسوم الخدمة</h4>
+        <p id="serviceFeeTotal">0 دينار</p>
+        <button id="closeServiceFee">
+            <i class="fas fa-times"></i> اغلاق
+        </button>
+    </div>
+
+    <!-- نافذة سجل الطلبات (محسنة للهواتف المحمولة) -->
+    <div class="orders-modal" id="ordersModal" style="display:none;">
+        <button id="floatingCloseBtn" class="floating-close-btn"><i class="fas fa-times"></i></button>
+        <div class="orders-modal-content">
+            <div class="orders-header">
+                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                    <h3><i class="fas fa-clipboard-list"></i> سجل الطلبات</h3>
+                    <button id="closeHeaderBtn" class="close-header-btn"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-tools">
+                    <div class="orders-search">
+                        <input type="text" id="orderSearch" placeholder="بحث في الطلبات..." />
+                        <button id="refreshOrders" title="تحديث"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                    <div class="filter-dropdown">
+                        <button id="filterButton"><i class="fas fa-filter"></i> تصفية <i class="fas fa-chevron-down"></i></button>
+                        <div class="filter-options">
+                            <div class="filter-option" data-filter="all">جميع الطلبات</div>
+                            <div class="filter-option" data-filter="today">طلبات اليوم</div>
+                            <div class="filter-option" data-filter="yesterday">طلبات الأمس</div>
+                            <div class="filter-option" data-filter="week">طلبات الأسبوع</div>
+                            <div class="filter-option" data-filter="month">طلبات الشهر</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="orders-summary">
+                <div class="summary-card">
+                    <div class="summary-icon"><i class="fas fa-list-alt"></i></div>
+                    <div class="summary-info">
+                        <div class="summary-count" id="totalOrders">0</div>
+                        <div class="summary-label">إجمالي الطلبات</div>
+                    </div>
+                </div>
+                <div class="summary-card smaller-card">
+                    <div class="summary-icon smaller-icon"><i class="fas fa-calendar-day"></i></div>
+                    <div class="summary-info">
+                        <div class="summary-count smaller-count" id="todayOrders">0</div>
+                        <div class="summary-label smaller-label">طلبات اليوم</div>
+                    </div>
+                </div>
+                <div class="summary-card smaller-card">
+                    <div class="summary-icon smaller-icon"><i class="fas fa-calendar-week"></i></div>
+                    <div class="summary-info">
+                        <div class="summary-count smaller-count" id="weeklyOrders">0</div>
+                        <div class="summary-label smaller-label">طلبات الأسبوع</div>
+                    </div>
+                </div>
+                <div class="summary-card smaller-card">
+                    <div class="summary-icon smaller-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="summary-info">
+                        <div class="summary-count smaller-count" id="monthlyOrders">0</div>
+                        <div class="summary-label smaller-label">طلبات الشهر</div>
+                    </div>
+                </div>
+                <div class="summary-card smaller-card">
+                    <div class="summary-icon smaller-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="summary-info">
+                        <div class="summary-count smaller-count" id="totalDriverFees">0 د.ع</div>
+                        <div class="summary-label smaller-label">رسوم الخدمة</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="active-filter">
+                <span>العرض الحالي: </span>
+                <span id="currentFilter">جميع الطلبات</span>
+            </div>
+
+            <div class="table-responsive">
+                <table id="ordersTable" class="display responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th data-priority="1">رقم الزبون</th>
+                            <th data-priority="1">المنطقة</th>
+                            <th data-priority="2">السعر</th>
+                            <th data-priority="3">سعر الطلب</th>
+                            <th data-priority="4">رسوم الخدمة</th>
+                            <th data-priority="3">ملاحظة</th>
+                            <th data-priority="1">التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersList"></tbody>
+                </table>
+            </div>
+
+            <div class="modal-actions">
+                <button id="exportOrders" class="action-btn export-btn">
+                    <i class="fas fa-file-export"></i> تصدير للإكسل
+                </button>
+                <button id="printOrders" class="action-btn print-btn">
+                    <i class="fas fa-print"></i> طباعة
+                </button>
+                <button class="action-btn close-btn" id="closeModal">
+                    <i class="fas fa-times"></i> إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- رسائل النجاح والخطأ -->
+    <div id="successMessage" style="display:none;">
+        <i class="fas fa-check-circle fa-2x"></i>
+        <p>تم استلام طلبك، سوف يصل السائق خلال 10 دقائق أو أقل.</p>
+    </div>
+
+    <div id="errorMessage" style="display:none;">
+        <i class="fas fa-exclamation-circle fa-2x" style="color: var(--danger-color); margin-bottom: 10px;"></i>
+        <span id="errorText">حدث خطأ بسبب عدم اتصالك بالإنترنت أو غيرها. لم يتم إرسال الطلب. يرجى المحاولة مرة أخرى.</span>
+        <button id="closeErrorMessage" onclick="hideErrorMessage()" style="margin-top: 15px; max-width: 120px;">إغلاق</button>
+    </div>
+
+    <!-- نافذة تأكيد تسجيل الخروج -->
+    <div id="confirmationModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <i class="fas fa-question-circle fa-3x" style="color: var(--primary-color); margin-bottom: 15px;"></i>
+            <p>هل أنت متأكد أنك تريد تسجيل الخروج؟</p>
+            <div style="display: flex; justify-content: center; gap: 10px;">
+                <button id="cancelLogoutBtn">
+                    <i class="fas fa-times"></i> لا
+                </button>
+                <button id="confirmLogoutBtn">
+                    <i class="fas fa-check"></i> نعم
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مؤشر التحميل -->
+    <div id="loadingIndicator" style="display: none;">
+        <div class="spinner"></div>
+        <span class="loading-text">جاري المعالجة...</span>
+    </div>
+
+    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="script.js"></script> 
 
-    <script>
-        $(document).ready(function() {
-            // إظهار رسالة الصيانة
-            $('#maintenanceMessage').show();
-
-            // إظهار القائمة الجانبية عند الضغط على زر الثلاث خطوط
-            $('#menuToggle').click(function() {
-                $('#sideMenu').toggle();
-            });
-
-            // إغلاق القائمة الجانبية
-            $('#closeSideMenu').click(function() {
-                $('#sideMenu').hide();
-            });
-        });
-    </script>
-   
 </body>
 </html>
-
-<!-- نافذة التأكيد المخصصة -->
-<div id="confirmationModal" class="modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); border-radius: 10px; z-index: 2000;">
-    <div class="modal-content">
-        <p>هل أنت متأكد أنك تريد تسجيل الخروج؟</p>
-        <button id="cancelLogoutBtn">لا</button>
-        <button id="confirmLogoutBtn">نعم</button>
-    </div>
-</div>
-
-
-<div id="loadingIndicator" style="display: none;">
-    <div class="spinner"></div> <!-- أيقونة تحميل -->
-    <span class="loading-text">جاري المعالجة...</span>
-</div>
