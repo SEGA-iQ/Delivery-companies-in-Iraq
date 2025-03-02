@@ -96,9 +96,8 @@
             margin-bottom: 30px;
             font-weight: 700;
             position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
+            width: 100%;
+            display: block;
         }
 
         h2::after {
@@ -194,12 +193,26 @@
 
         /* Restaurant Name Styling */
         .restaurant-name {
-            font-size: 24px;
+            font-size: 28px;
             color: var(--primary-color);
             text-align: center;
-            margin-bottom: 25px;
+            margin: 0 auto 25px auto;
             font-weight: 700;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .restaurant-title {
+            margin: 0 8px;
+            display: inline-block;
+        }
+
+        .text-center {
+            text-align: center !important;
+            width: 100%;
+            display: block;
         }
 
         /* Menu & Navigation */
@@ -353,7 +366,9 @@
             -webkit-overflow-scrolling: touch; /* Improve scrolling on iOS devices */
             padding: 20px;
             position: relative;
-            touch-action: pan-y pinch-zoom; /* تمكين التمرير الرأسي وتكبير/تصغير على الأجهزة اللمسية */
+            touch-action: manipulation; /* تحسين التفاعل على الأجهزة اللمسية */
+            scroll-behavior: smooth; /* تمرير سلس */
+            overscroll-behavior: contain; /* منع تأثير "bounce" عند التمرير */
         }
 
         .orders-header {
@@ -478,12 +493,41 @@
         .table-responsive {
             overflow-x: auto;
             overflow-y: auto;
-            max-height: none; /* إزالة الارتفاع الأقصى لتسهيل التمرير */
+            max-height: 60vh; /* تحديد ارتفاع أقصى للجدول ليكون قابل للتمرير */
             -webkit-overflow-scrolling: touch;
             margin-bottom: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             touch-action: pan-x pan-y; /* تمكين التمرير في جميع الاتجاهات */
+            scrollbar-width: thin; /* شكل شريط التمرير في فايرفوكس */
+            scrollbar-color: rgba(0, 86, 179, 0.5) #f1f1f1; /* لون شريط التمرير في فايرفوكس */
+            position: relative;
+            scroll-behavior: smooth;
+            cursor: grab; /* مؤشر السحب */
+        }
+        
+        .table-responsive:active {
+            cursor: grabbing; /* مؤشر أثناء السحب النشط */
+        }
+        
+        /* تخصيص شريط التمرير لمتصفح كروم وسفاري */
+        .table-responsive::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: rgba(0, 86, 179, 0.5);
+            border-radius: 10px;
+        }
+        
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 86, 179, 0.7);
         }
 
         .modal-actions {
@@ -716,7 +760,7 @@
             top: -20px;
             z-index: 10;
         }
-        
+
         .floating-close-btn {
             position: fixed;
             bottom: 20px;
@@ -736,7 +780,7 @@
             font-size: 18px;
             transition: transform 0.3s, background-color 0.3s;
         }
-        
+
         .floating-close-btn:hover {
             transform: scale(1.1);
             background: #bd2130;
@@ -893,25 +937,25 @@
             font-size: 0.8rem;
             color: #777;
         }
-        
+
         .smaller-card {
             transform: scale(0.85);
         }
-        
+
         .smaller-icon {
             width: 35px;
             height: 35px;
             font-size: 1rem;
         }
-        
+
         .smaller-count {
             font-size: 1rem;
         }
-        
+
         .smaller-label {
             font-size: 0.7rem;
         }
-        
+
         .close-header-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -928,7 +972,7 @@
             font-size: 16px;
             transition: background 0.3s;
         }
-        
+
         .close-header-btn:hover {
             background: rgba(255, 255, 255, 0.4);
         }
@@ -1191,8 +1235,8 @@
         <div class="container">
             <div class="form-row">
                 <div class="col-12 text-center">
-                    <div id="restaurantName" class="restaurant-name animate__animated animate__fadeIn">
-                        <i class="fas fa-utensils"></i> دلفري العراق
+                    <div id="restaurantName" class="restaurant-name animate__animated animate__fadeIn text-center">
+                        <i class="fas fa-utensils"></i> <span class="restaurant-title">دلفري العراق</span>
                     </div>
                 </div>
             </div>
