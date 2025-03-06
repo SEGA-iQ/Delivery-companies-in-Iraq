@@ -470,7 +470,7 @@ async function handleOrderSubmission() {
         }
         
         resetOrderForm();
-        showSuccessMessage('تم إرسال الطلب بنجاح وسيصل السائق خلال 10 دقائق أو أقل.');
+        showSuccessMessage('تم إرسال الطلب بنجاح .');
     } else {
         // في حالة الفشل، لا تقم بحفظ الطلب ولا تجمع الرسوم ولا تمسح الحقول
         showErrorMessage('فشل في إرسال الطلب. لم يتم حفظ الطلب أو جمع الرسوم. يرجى المحاولة مرة أخرى.');
