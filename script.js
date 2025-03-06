@@ -10,14 +10,12 @@ let currentRestaurant = JSON.parse(localStorage.getItem('currentRestaurant')) ||
 const restaurants = [
     'شركة الاتحاد',
     'تجربه'
-
 ];
 
 // قائمة المطاعم للقناة الثانية
 const restaurants2 = [
     'شركة الاتحاد',
     'فايرفاير الكرادة'
-    // أضف المزيد من المطاعم هنا
 ];
 
 // دمج المطاعم في قائمة واحدة وإزالة التكرار إن وجد
@@ -46,17 +44,38 @@ const showServiceFeeButton = document.getElementById('showServiceFee');
 const closeServiceFeeButton = document.getElementById('closeServiceFee');
 
 // وظيفة عرض مجموع رسوم الخدمة
-showServiceFeeButton.addEventListener('click', function() {
-    serviceFeeTotalContainer.style.display = 'block'; // إظهار العنصر
+showServiceFeeButton?.addEventListener('click', function() {
+    // إضافة تأثير ظهور لنافذة العرض
+    serviceFeeTotalContainer.style.opacity = '0';
+    serviceFeeTotalContainer.style.display = 'block';
+    serviceFeeTotalContainer.style.transform = 'translate(-50%, -50%) scale(0.9)';
+    
+    // ضمان أن النافذة في المقدمة دائمًا
+    serviceFeeTotalContainer.style.zIndex = '9600';
+    
+    // تأثير بصري للظهور
+    setTimeout(function() {
+        serviceFeeTotalContainer.style.opacity = '1';
+        serviceFeeTotalContainer.style.transform = 'translate(-50%, -50%) scale(1)';
+        serviceFeeTotalContainer.style.transition = 'all 0.3s ease';
+    }, 10);
+    
     showServiceFeeButton.style.display = 'none'; // إخفاء الزر
 });
 
 // وظيفة إخفاء مجموع رسوم الخدمة
-closeServiceFeeButton.addEventListener('click', function() {
-    serviceFeeTotalContainer.style.display = 'none'; // إخفاء العنصر
+closeServiceFeeButton?.addEventListener('click', function() {
+    // إضافة تأثير اختفاء
+    serviceFeeTotalContainer.style.opacity = '0';
+    serviceFeeTotalContainer.style.transform = 'translate(-50%, -50%) scale(0.9)';
+    
+    // إخفاء النافذة بعد انتهاء التأثير
+    setTimeout(function() {
+        serviceFeeTotalContainer.style.display = 'none';
+    }, 300);
+    
     showServiceFeeButton.style.display = 'block'; // إعادة إظهار الزر
 });
-
 
 // دالة للتحقق من الإصدار وتحديث بيانات localStorage إذا لزم الأمر
 function checkAndUpdateLocalStorage() {
@@ -115,13 +134,13 @@ async function validateSession() {
 const secretCode = 'A1122923a';
 
 // مستمع زر مسح مجموع رسوم الخدمة
-document.getElementById('clearServiceFeeTotal').addEventListener('click', function() {
+document.getElementById('clearServiceFeeTotal')?.addEventListener('click', function() {
     // إظهار مربع إدخال الرقم السري
     document.getElementById('secretCodeModal').style.display = 'block';
 });
 
 // مستمع زر تأكيد إدخال الرقم السري
-document.getElementById('confirmClearServiceFee').addEventListener('click', function() {
+document.getElementById('confirmClearServiceFee')?.addEventListener('click', function() {
     const inputCode = document.getElementById('secretCode').value;
 
     // تحقق مما إذا كان الرقم السري صحيحًا
@@ -137,9 +156,8 @@ document.getElementById('confirmClearServiceFee').addEventListener('click', func
     document.getElementById('secretCode').value = ''; // إعادة تعيين الحقل
 });
 
-
 // مستمع زر إلغاء إدخال الرقم السري
-document.getElementById('cancelClearServiceFee').addEventListener('click', function() {
+document.getElementById('cancelClearServiceFee')?.addEventListener('click', function() {
     document.getElementById('secretCodeModal').style.display = 'none'; // إخفاء مربع الإدخال
 });
 
@@ -163,7 +181,6 @@ function hideErrorMessage() {
     const errorMessage = document.getElementById('errorMessage');
     errorMessage.style.display = 'none';
 }
-
 
 // تحديث دالة تسجيل الدخول لتخزين بيانات الاعتماد بشكل صحيح
 async function login(email, password) {
@@ -301,16 +318,42 @@ function initializeOrderPage() {
     document.getElementById('serviceFee').value = `${currentRestaurant.restaurantDetails.serviceFee} دينار`;
 }
 
+// دالة لإعداد التحديث التلقائي للبيانات - معطلة
+function setupAutoRefresh() {
+    // تم تعطيل التحديث التلقائي
+}
 
 // دالة لحفظ الطلب في localStorage
 function saveOrder(order) {
     const ordersKey = `${currentRestaurant.name}_orders`;
     const existingOrders = JSON.parse(localStorage.getItem(ordersKey)) || [];
-    existingOrders.push(order);
+    
+    // التأكد من أن حقل التاريخ هو كائن Date صحيح
+    if (typeof order.date === 'string') {
+        order.date = new Date(order.date);
+    }
+    
+    // إضافة طابع زمني فريد للطلب
+    order.timestamp = Date.now();
+    
+    // إضافة الطلب إلى بداية المصفوفة (الأحدث في البداية)
+    existingOrders.unshift(order);
+    
+    // ترتيب الطلبات تنازلياً حسب التاريخ (الأحدث أولاً)
+    existingOrders.sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateB - dateA;
+    });
+    
     localStorage.setItem(ordersKey, JSON.stringify(existingOrders));
     console.log('تم حفظ الطلب بنجاح في localStorage.');
 }
 
+// دالة لتحديث عداد الطلبات في القائمة الجانبية - معطلة
+function updateSideMenuOrdersCount() {
+    // تم تعطيل التحديث التلقائي
+}
 
 // تعديل دالة إرسال الرسالة إلى Telegram لتحديد القناة
 async function sendMessageToTelegram(order) {
@@ -348,7 +391,6 @@ async function sendMessageToTelegram(order) {
     // تحديد قناة الإرسال بناءً على المطعم
     const channelId = restaurants.includes(currentRestaurant.name) ? chatId1 : chatId2;
 
-
     try {
         const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: 'POST',
@@ -378,7 +420,7 @@ async function handleOrderSubmission() {
     if (!sessionResult.isValid) return; // إذا كان الحساب موقوفًا
 
     if (sessionResult.isSuspended) {
-        showErrorMessage(` ${data.suspensionReason}`);
+        showErrorMessage(`${data.suspensionReason}`);
         return;
     }
 
@@ -421,6 +463,12 @@ async function handleOrderSubmission() {
         // إذا تم إرسال الطلب بنجاح، قم بحفظه، وجمع رسوم الخدمة، ومسح الحقول
         saveOrder(order);
         updateServiceFeeTotal();
+        
+        // تحديث سجل الطلبات إذا كان مفتوحاً
+        if (document.getElementById('ordersModal').style.display === 'block') {
+            loadOrderHistory(false);
+        }
+        
         resetOrderForm();
         showSuccessMessage('تم إرسال الطلب بنجاح وسيصل السائق خلال 10 دقائق أو أقل.');
     } else {
@@ -431,6 +479,7 @@ async function handleOrderSubmission() {
     hideLoadingIndicator();
     submitButton.disabled = false;
 }
+
 // دالة للتحقق من صحة نموذج الطلب
 function validateOrderForm(customerNumber, location, price, orderPrice) {
     let isValid = true;
@@ -458,7 +507,6 @@ function validateOrderForm(customerNumber, location, price, orderPrice) {
         hideFieldError('orderPriceError');
     }
 
-
     return isValid;
 }
 
@@ -466,13 +514,12 @@ function updateServiceFeeTotal() {
     const ordersKey = `${currentRestaurant.name}_orders`;
     const existingOrders = JSON.parse(localStorage.getItem(ordersKey)) || [];
 
-    // حساب مجموع رسوم الخدمة بناءً على الطلبات المخزنة
-    const totalServiceFee = existingOrders.reduce((sum, order) => sum + (order.serviceFee || 0), 0);
+    // حساب مجموع رسوم الخدمة (عدد الطلبات × 500 دينار)
+    const totalServiceFee = existingOrders.length * 500;
 
     // تحديث مجموع رسوم الخدمة في العنصر على الشاشة
     document.getElementById('serviceFeeTotal').textContent = `${totalServiceFee} دينار`;
 }
-
 
 // دوال لعرض وإخفاء رسائل الخطأ في الحقول
 function showFieldError(elementId, message) {
@@ -494,6 +541,9 @@ function resetOrderForm() {
     document.getElementById('price').value = '';
     document.getElementById('orderPrice').value = '';
     document.getElementById('note').value = '';
+    
+    // تشغيل صوت تنبيه الطلب الجديد
+    playNotificationSound();
 }
 
 $(document).ready(function() {
@@ -507,8 +557,26 @@ $(document).ready(function() {
     if (currentRestaurant) {
         updateServiceFeeTotal();
     }
+    
+    // إضافة صوت التنبيه للطلبات الجديدة
+    const notificationSound = document.createElement('audio');
+    notificationSound.id = 'notificationSound';
+    notificationSound.preload = 'auto';
+    notificationSound.src = 'https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3'; // صوت تنبيه
+    document.body.appendChild(notificationSound);
+    
+    // تعيين حجم الصوت
+    notificationSound.volume = 0.5;
 });
 
+// وظيفة تشغيل صوت التنبيه
+function playNotificationSound() {
+    const sound = document.getElementById('notificationSound');
+    if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log('تعذر تشغيل الصوت', e));
+    }
+}
 
 // دوال لعرض رسائل النجاح والخطأ
 function showSuccessMessage(message) {
@@ -520,25 +588,6 @@ function showSuccessMessage(message) {
     }, 6000);
 }
 
-function showErrorMessage(message) {
-    const errorMessage = document.getElementById('errorMessage');
-    const errorText = document.getElementById('errorText');
-    errorText.textContent = message;
-    errorMessage.style.display = 'block';
-}
-function hideErrorMessage() {
-    const errorMessage = document.getElementById('errorMessage');
-    errorMessage.style.display = 'none';
-}
-
-function showErrorMessage(message) {
-    const errorMessage = document.getElementById('errorMessage');
-    const errorText = document.getElementById('errorText');
-    errorText.textContent = message;
-    errorMessage.style.display = 'block';
-}
-
-
 function showLoadingIndicator() {
     document.getElementById('loadingIndicator').style.display = 'block';
 }
@@ -547,1705 +596,836 @@ function hideLoadingIndicator() {
     document.getElementById('loadingIndicator').style.display = 'none';
 }
 
+// دالة لتسجيل الخروج مع إظهار رسالة تأكيد مخصصة
+function showLogoutConfirmation() {
+    // إظهار نافذة التأكيد المخصصة
+    const modal = document.getElementById('confirmationModal');
+    modal.style.display = 'block';
 
-// متغير لتخزين الطلبات الحالية
-let currentOrders = [];
-let currentDataTable = null;
-let currentFilter = 'all';
+    const confirmBtn = document.getElementById('confirmLogoutBtn');
 
-// دالة لعرض سجل الطلبات
-function displayOrders(filter = 'all') {
-    if (!currentRestaurant) {
-        showErrorMessage('يرجى تسجيل الدخول أولاً لعرض سجل الطلبات.');
-        return;
-    }
+    // تعليق أو إزالة تحريك الزر عشوائياً
+    confirmBtn.onmouseover = null; // هذا سيمنع الزر من التحرك
 
-    const ordersKey = `${currentRestaurant.name}_orders`;
-    const orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
-    currentOrders = orders; // تخزين الطلبات في المتغير العام
-    currentFilter = filter; // تخزين التصفية الحالية
-
-    if (orders.length === 0) {
-        showErrorMessage('لا توجد طلبات مسجلة لهذا المطعم.');
-        return;
-    }
-
-    // تحديث عنوان الفلتر الحالي
-    updateCurrentFilterText(filter);
-
-    // تصفية الطلبات بناءً على المرشح
-    let filteredOrders = filterOrdersByFilter(orders, filter);
-
-    const ordersList = document.getElementById('ordersList');
-    ordersList.innerHTML = ''; // تنظيف الجدول
-
-    // عرض الطلبات المصفاة
-    filteredOrders.reverse().forEach(order => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${order.customerNumber || '-'}</td>
-            <td>${order.location}</td>
-            <td>${order.price} دينار</td>
-            <td>${order.orderPrice} دينار</td>
-            <td>${order.serviceFee} دينار</td>
-            <td>${order.note || '-'}</td>
-            <td>${formatDate(order.date)}</td>
-        `;
-        ordersList.appendChild(row);
-    });
-
-    // حساب ملخص الطلبات
-    calculateOrderSummary(orders);
-
-    // عرض النافذة المنبثقة لسجل الطلبات
-    document.getElementById('ordersModal').style.display = 'block';
-
-    // إعادة تهيئة جدول البيانات
-    initializeDataTable();
-
-    // تفعيل وظيفة السحب في الجدول
-    setTimeout(() => {
-        // تأخير قليل للتأكد من تحميل العناصر بشكل كامل
-        initializeOrdersModal(); //This call is now correct, as it's only called once after the DataTable is initialized.
-    }, 300);
-}
-
-// تحديث نص التصفية الحالية
-function updateCurrentFilterText(filter) {
-    const filterTexts = {
-        'all': 'جميع الطلبات',
-        'today': 'طلبات اليوم',
-        'yesterday': 'طلبات الأمس',
-        'week': 'طلبات الأسبوع',
-        'month': 'طلبات الشهر'
+    // عند النقر على زر "نعم" بعد محاولة الوصول إليه
+    confirmBtn.onclick = function() {
+        modal.style.display = 'none';
+        logout(); // استدعاء دالة تسجيل الخروج
     };
 
-    document.getElementById('currentFilter').textContent = filterTexts[filter] || 'جميع الطلبات';
+    // عند النقر على زر "لا" لإلغاء تسجيل الخروج
+    document.getElementById('cancelLogoutBtn').onclick = function() {
+        modal.style.display = 'none';
+    };
 }
 
-// دالة تنسيق التاريخ بشكل أفضل
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    // تحقق مما إذا كان التاريخ هو اليوم
-    if (date.toDateString() === today.toDateString()) {
-        return `اليوم ${date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' })}`;
-    }
-
-    // تحقق مما إذا كان التاريخ هو الأمس
-    if (date.toDateString() === yesterday.toDateString()) {
-        return `الأمس ${date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' })}`;
-    }
-
-    // تنسيق التاريخ الكامل
-    return date.toLocaleString('ar-IQ', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+// دالة لتسجيل الخروج
+function logout() {
+    currentRestaurant = null;
+    localStorage.removeItem('currentRestaurant');
+    document.getElementById('loginContainer').style.display = 'block';
+    document.getElementById('orderContainer').style.display = 'none';
+    showSuccessMessage('تم تسجيل الخروج بنجاح.');
 }
 
-// دالة لتصفية الطلبات بناءً على الفلتر المحدد
-function filterOrdersByFilter(orders, filter) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // ضبط الوقت إلى بداية اليوم
+// دالة لتحميل سجل الطلبات وعرضه
+function loadOrderHistory(showLoading = false) {
+    if (!currentRestaurant) return;
 
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    switch (filter) {
-        case 'today':
-            return orders.filter(order => {
-                const orderDate = new Date(order.date);
-                return orderDate >= today;
-            });
-
-        case 'yesterday':
-            return orders.filter(order => {
-                const orderDate = new Date(order.date);
-                return orderDate >= yesterday && orderDate < today;
-            });
-
-        case 'week':
-            const weekStart = new Date(today);
-            weekStart.setDate(today.getDate() - today.getDay());
-            return orders.filter(order => {
-                const orderDate = new Date(order.date);
-                return orderDate >= weekStart;
-            });
-
-        case 'month':
-            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-            return orders.filter(order => {
-                const orderDate = new Date(order.date);
-                return orderDate >= monthStart;
-            });
-
-        default:
-            return orders;
-    }
-}
-
-// تهيئة نافذة سجل الطلبات وتفعيل خاصية السحب
-function initializeOrdersModal() {
-    // تفعيل وظيفة السحب للتمرير
-    enableTableDragScroll();
-
-    // إضافة خاصية التكبير والتصغير بالإصبعين للأجهزة اللمسية
-    const tableContainer = document.querySelector('.table-responsive');
-    if (tableContainer) {
-        // تحسين مظهر الجدول ليكون قابل للسحب بشكل واضح
-        tableContainer.style.cursor = 'grab';
-        tableContainer.style.overflowY = 'auto';
-        tableContainer.style.maxHeight = '60vh';
-        tableContainer.style.webkitOverflowScrolling = 'touch';
-
-        // إضافة تلميح واضح للمستخدم حول إمكانية السحب
-        const dragHint = document.createElement('div');
-        dragHint.className = 'drag-hint';
-        dragHint.innerHTML = '<i class="fas fa-arrows-alt"></i> اسحب الجدول للأعلى والأسفل لرؤية جميع الطلبات';
-        dragHint.style.textAlign = 'center';
-        dragHint.style.padding = '8px';
-        dragHint.style.margin = '10px 0';
-        dragHint.style.color = '#0056b3';
-        dragHint.style.fontSize = '14px';
-        dragHint.style.backgroundColor = '#f8f9fa';
-        dragHint.style.borderRadius = '5px';
-        dragHint.style.border = '1px solid #ddd';
-
-        // إضافة التلميح قبل الجدول
-        tableContainer.parentNode.insertBefore(dragHint, tableContainer);
-
-        // إخفاء التلميح بعد 8 ثوانٍ
-        setTimeout(() => {
-            dragHint.style.opacity = '0';
-            dragHint.style.transition = 'opacity 1s';
-            setTimeout(() => {
-                dragHint.style.display = 'none';
-            }, 1000);
-        }, 8000);
-    }
-
-    // تفعيل التمرير السلس على الأجهزة اللمسية
-    const ordersModalContent = document.querySelector('.orders-modal-content');
-    if (ordersModalContent) {
-        ordersModalContent.style.overscrollBehavior = 'contain';
-        ordersModalContent.style.webkitOverflowScrolling = 'touch';
-    }
-}
-
-// دالة البحث في الطلبات
-function searchOrders(query) {
-    if (!query || query.trim() === '') {
-        displayOrders(currentFilter);
-        return;
-    }
-
-    query = query.trim().toLowerCase();
-
-    // تصفية الطلبات بناءً على البحث
-    const searchResults = currentOrders.filter(order => {
-        const searchFields = [
-            order.customerNumber,
-            order.location,
-            order.note,
-            order.price,
-            order.orderPrice,
-            new Date(order.date).toLocaleString('ar-IQ')
-        ];
-
-        return searchFields.some(field =>
-            field && field.toString().toLowerCase().includes(query)
-        );
-    });
-
-    if (searchResults.length === 0) {
-        // إظهار رسالة عدم وجود نتائج ضمن الجدول وليس كخطأ منبثق
-        const ordersList = document.getElementById('ordersList');
-        ordersList.innerHTML = `
-            <tr>
-                <td colspan="7" class="no-results">
-                    <i class="fas fa-search-minus"></i>
-                    <p>لا توجد نتائج مطابقة للبحث</p>
-                </td>
-            </tr>
+    // إظهار مؤشر التحميل إذا تم طلبه
+    if (showLoading) {
+        const loadingSpinner = document.createElement('div');
+        loadingSpinner.classList.add('loading-spinner');
+        loadingSpinner.innerHTML = `
+            <div class="spinner"></div>
+            <span>جاري تحميل البيانات...</span>
         `;
-
-        if (currentDataTable) {
-            currentDataTable.destroy();
-        }
-
-        // تهيئة الجدول مع رسالة البحث
-        currentDataTable = $('#ordersTable').DataTable({
-            responsive: true,
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/ar.json',
-                emptyTable: "لا توجد نتائج مطابقة للبحث"
-            },
-            paging: false,
-            info: false
-        });
-
-        return;
+        loadingSpinner.style.position = 'fixed';
+        loadingSpinner.style.top = '50%';
+        loadingSpinner.style.left = '50%';
+        loadingSpinner.style.transform = 'translate(-50%, -50%)';
+        loadingSpinner.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+        loadingSpinner.style.padding = '20px';
+        loadingSpinner.style.borderRadius = '10px';
+        loadingSpinner.style.zIndex = '2000';
+        loadingSpinner.style.display = 'flex';
+        loadingSpinner.style.flexDirection = 'column';
+        loadingSpinner.style.alignItems = 'center';
+        loadingSpinner.style.justifyContent = 'center';
+        document.body.appendChild(loadingSpinner);
+        
+        // إزالة مؤشر التحميل بعد 1 ثانية
+        setTimeout(() => {
+            document.body.removeChild(loadingSpinner);
+        }, 1000);
     }
+    
+    // حفظ حالة الفلتر الحالي وموضع التمرير
+    const currentFilter = document.getElementById('currentFilter') ? 
+        document.getElementById('currentFilter').textContent : 'جميع الطلبات';
 
-    // عرض نتائج البحث
+    // الحصول على الطلبات من التخزين المحلي
+    const ordersKey = `${currentRestaurant.name}_orders`;
+    let orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+
+    // ترتيب الطلبات حسب التاريخ تنازلياً (الأحدث أولاً)
+    orders.sort((a, b) => {
+        return new Date(b.date) - new Date(a.date);
+    });
+
+    // تحديث ملخص الطلبات
+    updateOrdersSummary(orders);
+
+    // تفريغ جدول الطلبات
     const ordersList = document.getElementById('ordersList');
     ordersList.innerHTML = '';
 
-    searchResults.reverse().forEach(order => {
+    // إضافة معرف فريد لكل طلب لتسهيل التتبع
+    orders.forEach((order, index) => {
+        // التأكد من أن التاريخ ليس نصاً
+        if (typeof order.date === 'string') {
+            order.date = new Date(order.date);
+        }
+
+        const date = new Date(order.date);
+        const formattedDate = date.toLocaleDateString('ar-IQ', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }) + ' ' + date.toLocaleTimeString('ar-IQ', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
         const row = document.createElement('tr');
+        row.id = `order-${index}`;
+        row.dataset.date = date.getTime(); // إضافة تاريخ الطلب كخاصية للصف
+        
+        // إضافة صف جديد مع تأثير ظهور تدريجي إذا كان هذا هو الطلب الأحدث
+        if (index === 0) {
+            row.classList.add('new-order');
+            row.style.animation = 'highlightNew 2s ease';
+        }
+        
         row.innerHTML = `
-            <td>${order.customerNumber || '-'}</td>
+            <td>${order.customerNumber || 'غير متوفر'}</td>
             <td>${order.location}</td>
             <td>${order.price} دينار</td>
-            <td>${order.orderPrice} دينار</td>
+            <td>${order.orderPrice || 'غير متوفر'} دينار</td>
             <td>${order.serviceFee} دينار</td>
-            <td>${order.note || '-'}</td>
-            <td>${formatDate(order.date)}</td>
+            <td>${order.note || 'لا توجد ملاحظات'}</td>
+            <td data-sort="${date.getTime()}">${formattedDate}</td>
         `;
         ordersList.appendChild(row);
     });
 
-    // إعادة تهيئة جدول البيانات مع عرض رسالة عدد النتائج
-    initializeDataTable();
-
-    // تحديث نص التصفية الحالية ليعكس نتائج البحث
-    document.getElementById('currentFilter').textContent = `نتائج البحث (${searchResults.length})`;
-}
-
-// تصدير الطلبات إلى ملف اكسل 
-function exportToExcel() {
-    if (currentOrders.length === 0) {
-        showErrorMessage('لا توجد طلبات للتصدير');
-        return;
+    // تحديث DataTable مع الحفاظ على حالة التمرير والبحث إن أمكن
+    let scrollPos = 0;
+    let searchValue = '';
+    let page = 0;
+    
+    // حفظ حالة الجدول الحالي إذا كان موجودًا
+    if ($.fn.dataTable.isDataTable('#ordersTable')) {
+        const table = $('#ordersTable').DataTable();
+        scrollPos = $('.dataTables_scrollBody').scrollTop();
+        searchValue = table.search();
+        page = table.page.info().page;
+        table.destroy();
     }
 
-    // تحديد الطلبات التي سيتم تصديرها (الفلترة الحالية أو نتائج البحث)
-    const ordersToExport = filterOrdersByFilter(currentOrders, currentFilter);
-
-    if (ordersToExport.length === 0) {
-        showErrorMessage('لا توجد طلبات للتصدير في التصفية الحالية');
-        return;
-    }
-
-    // إنشاء جدول بالبيانات للتصدير
-    let tableHtml = '<table dir="rtl"><thead><tr>';
-    tableHtml += '<th>رقم الزبون</th>';
-    tableHtml += '<th>المنطقة</th>';
-    tableHtml += '<th>السعر</th>';
-    tableHtml += '<th>سعر الطلب</th>';
-    tableHtml += '<th>رسوم الخدمة</th>';
-    tableHtml += '<th>ملاحظة</th>';
-    tableHtml += '<th>التاريخ</th>';
-    tableHtml += '</tr></thead><tbody>';
-
-    // إضافة بيانات الطلبات
-    ordersToExport.reverse().forEach(order => {
-        tableHtml += '<tr>';
-        tableHtml += `<td>${order.customerNumber || '-'}</td>`;
-        tableHtml += `<td>${order.location}</td>`;
-        tableHtml += `<td>${order.price} دينار</td>`;
-        tableHtml += `<td>${order.orderPrice} دينار</td>`;
-        tableHtml += `<td>${order.serviceFee} دينار</td>`;
-        tableHtml += `<td>${order.note || '-'}</td>`;
-        tableHtml += `<td>${new Date(order.date).toLocaleString('ar-IQ')}</td>`;
-        tableHtml += '</tr>';
+    // إعادة إنشاء الجدول مع التحسينات
+    const table = $('#ordersTable').DataTable({
+        responsive: true,
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.10.24/i18n/ar.json'
+        },
+        order: [[6, 'desc']], // ترتيب حسب التاريخ تنازلياً (العمود السابع)
+        scrollY: '50vh',      // السماح بالتمرير العمودي داخل الجدول
+        scrollCollapse: true, // تقليص ارتفاع الجدول إذا كان عدد الصفوف قليلاً
+        paging: true,         // تفعيل ترقيم الصفحات
+        pageLength: 25,       // عدد الصفوف في كل صفحة
+        stateSave: false,     // لا حاجة لحفظ الحالة لأننا نديرها يدويًا
+        dom: '<"top"if>rt<"bottom"lp><"clear">',  // تنسيق الواجهة
+        columnDefs: [
+            { 
+                targets: 6, // العمود السابع (التاريخ)
+                type: 'date' // تحديد نوع العمود كتاريخ
+            }
+        ],
+        drawCallback: function() {
+            // استعادة موضع التمرير بعد إعادة الرسم
+            $('.dataTables_scrollBody').scrollTop(scrollPos);
+        },
+        initComplete: function() {
+            // استعادة مصطلح البحث وصفحة العرض
+            if (searchValue) {
+                table.search(searchValue).draw();
+            }
+            if (page > 0) {
+                table.page(page).draw('page');
+            }
+        }
     });
 
-    // إضافة صف إحصائي في النهاية
-    const totalDriverFees = ordersToExport.reduce((sum, order) => sum + (parseInt(order.price) || 0), 0);
-    const totalServiceFee = ordersToExport.reduce((sum, order) => sum + (parseInt(order.serviceFee) || 0), 0);
+    // إذا لم تكن النافذة مفتوحة بالفعل، قم بفتحها
+    if (document.getElementById('ordersModal').style.display !== 'block') {
+        document.getElementById('ordersModal').style.display = 'block';
+        document.getElementById('sideMenu').classList.remove('open');
+        disablePageScrolling(); // تعطيل التمرير في الصفحة مع السماح بالتمرير داخل النافذة
+    }
+    
+    // تحسين سلوك التمرير داخل النافذة
+    setTimeout(() => {
+        const tableContainer = document.querySelector('.table-responsive');
+        if (tableContainer) {
+            tableContainer.style.touchAction = 'pan-y';
+            tableContainer.style.webkitOverflowScrolling = 'touch';
+        }
+    }, 300);
+    
+    // إضافة تأثير CSS للطلب الجديد
+    const style = document.createElement('style');
+    style.innerHTML = `
+        @keyframes highlightNew {
+            0% { background-color: rgba(76, 175, 80, 0.3); }
+            100% { background-color: transparent; }
+        }
+        .new-order {
+            position: relative;
+        }
+        .new-order::before {
+            content: 'جديد';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 12px;
+            padding: 3px 6px;
+            border-radius: 10px;
+            opacity: 0;
+            animation: fadeInOut 3s forwards;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+}
 
-    tableHtml += '<tr><th colspan="7" style="text-align:center; background-color:#f0f0f0;">إحصائيات</th></tr>';
-    tableHtml += `<tr><td colspan="2">عدد الطلبات: ${ordersToExport.length}</td><td>مجموع الأجور: ${totalDriverFees} دينار</td><td colspan="3">مجموع رسوم الخدمة: ${totalServiceFee} دينار</td><td>تاريخ التصدير: ${new Date().toLocaleDateString('ar-IQ')}</td></tr>`;
+// دالة لتحديث ملخص الطلبات
+function updateOrdersSummary(orders) {
+    // حساب إجمالي عدد الطلبات
+    document.getElementById('totalOrders').textContent = orders.length;
 
-    tableHtml += '</tbody></table>';
+    // حساب طلبات اليوم
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayOrders = orders.filter(order => new Date(order.date) >= today);
+    document.getElementById('todayOrders').textContent = todayOrders.length;
 
-    // إنشاء ملف اكسل
-    const filterText = document.getElementById('currentFilter').textContent;
-    const filename = `طلبات_${currentRestaurant.name}_${filterText}_${new Date().toLocaleDateString('ar-IQ')}.xls`;
+    // حساب طلبات الأسبوع
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+    const weeklyOrders = orders.filter(order => new Date(order.date) >= weekStart);
+    document.getElementById('weeklyOrders').textContent = weeklyOrders.length;
 
-    // إنشاء رابط للتحميل مع دعم كامل للغة العربية
-    const uri = 'data:application/vnd.ms-excel;base64,';
-    const template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gtemso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayDirectionRTL/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table dir="rtl">{table}</table></body></html>';
-    const base64 = function(s) {
-        return window.btoa(unescape(encodeURIComponent(s)));
-    };
+    // حساب طلبات الشهر
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    monthStart.setHours(0, 0, 0, 0);
+    const monthlyOrders = orders.filter(order => new Date(order.date) >= monthStart);
+    document.getElementById('monthlyOrders').textContent = monthlyOrders.length;
 
-    const format = function(s, c) {
-        return s.replace(/{(\w+)}/g, function(m, p) {
-            return c[p];
+    // حساب إجمالي رسوم الخدمة (عدد الطلبات × 500 دينار)
+    const totalDriverFees = orders.length * 500;
+    document.getElementById('totalDriverFees').textContent = `${totalDriverFees} د.ع`;
+}
+
+// إعداد مستمعي الأحداث عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    // إضافة زر تبديل الوضع المظلم (Dark Mode)
+    addThemeToggle();
+    
+    // تنشيط كافة التأثيرات المرئية
+    initializeAnimations();
+    
+    // تفعيل Reveal on Scroll
+    initScrollReveal();
+    
+    if (currentRestaurant) {
+        initializeOrderPage();
+    }
+
+    // مستمع زر القائمة الجانبية
+    document.getElementById('menuToggle')?.addEventListener('click', function() {
+        document.getElementById('sideMenu').classList.add('open');
+        // تحديث عداد الطلبات في القائمة
+        updateSideMenuOrdersCount();
+    });
+
+    // مستمع زر إغلاق القائمة الجانبية
+    document.getElementById('closeSideMenu')?.addEventListener('click', function() {
+        document.getElementById('sideMenu').classList.remove('open');
+    });
+
+    // مستمع زر عرض سجل الطلبات
+    document.getElementById('showOrders')?.addEventListener('click', function() {
+        // فتح نافذة سجل الطلبات أولاً
+        document.getElementById('ordersModal').style.display = 'block';
+        document.getElementById('sideMenu').classList.remove('open');
+        disablePageScrolling(); // تعطيل التمرير في الصفحة
+        
+        // ثم تحميل البيانات مع تأثير التحميل المرئي
+        loadOrderHistory(true);
+    });
+
+    // مستمع زر تسجيل الدخول
+    document.getElementById('loginBtn')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        login(email, password);
+    });
+
+    // مستمع زر إرسال الطلب
+    document.getElementById('submitOrder')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        handleOrderSubmission();
+    });
+
+    // مستمع زر تسجيل الخروج مع إظهار رسالة التأكيد المخصصة
+    document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        showLogoutConfirmation();
+    });
+
+    // مستمعات الأحداث لنافذة سجل الطلبات
+    document.getElementById('closeModal')?.addEventListener('click', function() {
+        document.getElementById('ordersModal').style.display = 'none';
+        enablePageScrolling(); // تمكين التمرير في الصفحة
+    });
+
+    document.getElementById('floatingCloseBtn')?.addEventListener('click', function() {
+        document.getElementById('ordersModal').style.display = 'none';
+        enablePageScrolling(); // تمكين التمرير في الصفحة
+    });
+
+    document.getElementById('closeHeaderBtn')?.addEventListener('click', function() {
+        document.getElementById('ordersModal').style.display = 'none';
+        enablePageScrolling(); // تمكين التمرير في الصفحة
+    });
+
+    // مستمع زر تصدير البيانات
+    document.getElementById('exportOrders')?.addEventListener('click', function() {
+        exportOrdersToExcel();
+    });
+
+    // مستمع زر طباعة سجل الطلبات
+    document.getElementById('printOrders')?.addEventListener('click', function() {
+        printOrders();
+    });
+
+    // مستمع زر تحديث سجل الطلبات مع تأثير مرئي
+    document.getElementById('refreshOrders')?.addEventListener('click', function() {
+        // إضافة تأثير دوران للأيقونة
+        const icon = this.querySelector('i');
+        icon.classList.add('fa-spin');
+        
+        // تحديث البيانات
+        loadOrderHistory(false);
+        
+        // إزالة تأثير الدوران بعد ثانية واحدة
+        setTimeout(function() {
+            icon.classList.remove('fa-spin');
+        }, 1000);
+    });
+
+    // مستمع زر التصفية
+    document.getElementById('filterButton')?.addEventListener('click', function() {
+        const filterOptions = document.querySelector('.filter-options');
+        if (filterOptions.style.display === 'block') {
+            filterOptions.style.display = 'none';
+        } else {
+            filterOptions.style.display = 'block';
+        }
+    });
+
+    // مستمعات خيارات التصفية
+    document.querySelectorAll('.filter-option')?.forEach(option => {
+        option.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            filterOrders(filter);
+            document.querySelector('.filter-options').style.display = 'none';
+            document.getElementById('currentFilter').textContent = this.textContent;
         });
-    };
+    });
 
-    const ctx = { worksheet: 'الطلبات', table: tableHtml };
+    // إخفاء خيارات التصفية عند النقر خارجها
+    document.addEventListener('click', function(event) {
+        const filterDropdown = document.querySelector('.filter-dropdown');
+        const filterOptions = document.querySelector('.filter-options');
+        if (filterDropdown && filterOptions && !filterDropdown.contains(event.target) && filterOptions.style.display === 'block') {
+            filterOptions.style.display = 'none';
+        }
+    });
 
-    // إنشاء رابط التحميل وتنزيل الملف
-    const link = document.createElement('a');
-    link.download = filename;
-    link.href = uri + base64(format(template, ctx));
+    // مستمع حقل البحث في الوقت الحقيقي
+    document.getElementById('orderSearch')?.addEventListener('input', function() {
+        const dataTable = $('#ordersTable').DataTable();
+        dataTable.search(this.value).draw();
+    });
+});
+
+// دالة لتصدير الطلبات إلى ملف إكسل
+function exportOrdersToExcel() {
+    if (!currentRestaurant) return;
+
+    const ordersKey = `${currentRestaurant.name}_orders`;
+    const orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+
+    if (orders.length === 0) {
+        showErrorMessage('لا توجد طلبات لتصديرها!');
+        return;
+    }
+
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+
+    // إضافة رأس الجدول
+    csvContent += "رقم الزبون,المنطقة,كلفة التوصيل,سعر الطلب,رسوم الخدمة,ملاحظة,التاريخ\n";
+
+    // إضافة الصفوف
+    orders.forEach(order => {
+        const date = new Date(order.date);
+        const formattedDate = date.toLocaleDateString('ar-IQ', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const row = [
+            order.customerNumber || 'غير متوفر',
+            order.location,
+            order.price + ' دينار',
+            (order.orderPrice || 'غير متوفر') + ' دينار',
+            order.serviceFee + ' دينار',
+            order.note || 'لا توجد ملاحظات',
+            formattedDate
+        ];
+
+        csvContent += row.map(cell => `"${cell}"`).join(',') + "\n";
+    });
+
+    // إنشاء رابط التنزيل
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `طلبات_${currentRestaurant.name}_${new Date().toLocaleDateString()}.csv`);
+    document.body.appendChild(link);
+
+    // النقر على الرابط لتنزيل الملف
     link.click();
+    document.body.removeChild(link);
 
-    showSuccessMessage('تم تصدير الطلبات بنجاح');
+    showSuccessMessage('تم تصدير الطلبات بنجاح!');
 }
 
-// دالة لطباعة الطلبات
+// دالة لطباعة سجل الطلبات
 function printOrders() {
-    if (currentOrders.length === 0) {
-        showErrorMessage('لا توجد طلبات للطباعة');
-        return;
-    }
+    if (!currentRestaurant) return;
 
-    // تحديد الطلبات التي سيتم طباعتها (الفلترة الحالية أو نتائج البحث)
-    const ordersToPrint = filterOrdersByFilter(currentOrders, currentFilter);
+    const printWindow = window.open('', '', 'height=600,width=800');
 
-    if (ordersToPrint.length === 0) {
-        showErrorMessage('لا توجد طلبات للطباعة في التصفية الحالية');
-        return;
-    }
+    printWindow.document.write('<html dir="rtl"><head><title>سجل الطلبات</title>');
+    printWindow.document.write('<style>');
+    printWindow.document.write(`
+        body { font-family: 'Tajawal', Arial, sans-serif; padding: 20px; }
+        h2 { text-align: center; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; border: 1px solid #ddd; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .summary { margin-bottom: 20px; }
+        .summary span { font-weight: bold; }
+    `);
+    printWindow.document.write('</style></head><body>');
 
-    // إنشاء نافذة طباعة جديدة
-    const printWindow = window.open('', '_blank');
+    // عنوان الصفحة
+    printWindow.document.write(`<h2>سجل طلبات ${currentRestaurant.name}</h2>`);
 
-    // إنشاء محتوى HTML للطباعة
-    const printContent = `
-        <!DOCTYPE html>
-        <html dir="rtl" lang="ar">
-        <head>
-            <meta charset="UTF-8">
-            <title>طلبات ${currentRestaurant.name}</title>
-            <style>
-                body {
-                    font-family: 'Cairo', 'Arial', sans-serif;
-                    direction: rtl;
-                    padding: 20px;
-                }
-                h1 {
-                    text-align: center;
-                    color: #0056b3;
-                    margin-bottom: 20px;
-                }
-                .print-info {
-                    text-align: center;
-                    margin-bottom: 20px;
-                    font-size: 14px;
-                    color: #666;
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-bottom: 20px;
-                }
-                th, td {
-                    border: 1px solid #ddd;
-                    padding: 8px;
-                    text-align: right;
-                }
-                th {
-                    background-color: #f2f2f2;
-                    font-weight: bold;
-                }
-                tr:nth-child(even) {
-                    background-color: #f9f9f9;
-                }
-                .summary {
-                    margin-top: 30px;
-                    border-top: 2px solid #ddd;
-                    padding-top: 10px;
-                }
-                .summary p {
-                    margin: 5px 0;
-                }
-                @media print {
-                    body {
-                        font-size: 12px;
-                    }
-                    h1 {
-                        font-size: 18px;
-                    }
-                    .print-info {
-                        font-size: 10px;
-                    }
-                }
-            </style>
-        </head>
-        <body>
-            <h1>سجل طلبات ${currentRestaurant.name}</h1>
-            <div class="print-info">
-                <p>التصفية: ${document.getElementById('currentFilter').textContent}</p>
-                <p>تاريخ الطباعة: ${new Date().toLocaleString('ar-IQ')}</p>
-            </div>
+    // ملخص الطلبات
+    const ordersKey = `${currentRestaurant.name}_orders`;
+    const orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>رقم الزبون</th>
-                        <th>المنطقة</th>
-                        <th>السعر</th>
-                        <th>سعر الطلب</th>
-                        <th>رسوم الخدمة</th>
-                        <th>ملاحظة</th>
-                        <th>التاريخ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${ordersToPrint.reverse().map(order => `
-                        <tr>
-                            <td>${order.customerNumber || '-'}</td>
-                            <td>${order.location}</td>
-                            <td>${order.price} دينار</td>
-                            <td>${order.orderPrice} دينار</td>
-                            <td>${order.serviceFee} دينار</td>
-                            <td>${order.note || '-'}</td>
-                            <td>${new Date(order.date).toLocaleString('ar-IQ')}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+    printWindow.document.write('<div class="summary">');
+    printWindow.document.write(`<p>إجمالي عدد الطلبات: <span>${orders.length}</span></p>`);
 
-            <div class="summary">
-                <p><strong>إجمالي عدد الطلبات:</strong> ${ordersToPrint.length}</p>
-                <p><strong>مجموع أجور السائقين:</strong> ${ordersToPrint.reduce((sum, order) => sum + (parseInt(order.price) || 0), 0)} دينار</p>
-                <p><strong>مجموع رسوم الخدمة:</strong> ${ordersToPrint.reduce((sum, order) => sum + (parseInt(order.serviceFee) || 0), 0)} دينار</p>
-            </div>
-        </body>
-        </html>
-    `;
+    // حساب طلبات اليوم
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayOrders = orders.filter(order => new Date(order.date) >= today);
+    printWindow.document.write(`<p>طلبات اليوم: <span>${todayOrders.length}</span></p>`);
 
-    // كتابة المحتوى في نافذة الطباعة
-    printWindow.document.open();
-    printWindow.document.write(printContent);
+    // حساب إجمالي رسوم الخدمة (عدد الطلبات × 500 دينار)
+    const totalDriverFees = orders.length * 500;
+    printWindow.document.write(`<p>إجمالي رسوم الخدمة: <span>${totalDriverFees} دينار</span></p>`);
+
+    printWindow.document.write(`<p>تاريخ الطباعة: <span>${new Date().toLocaleDateString('ar-IQ')}</span></p>`);
+    printWindow.document.write('</div>');
+
+    // جدول الطلبات
+    printWindow.document.write('<table>');
+    printWindow.document.write('<thead><tr><th>رقم الزبون</th><th>المنطقة</th><th>كلفة التوصيل</th><th>سعر الطلب</th><th>رسوم الخدمة</th><th>ملاحظة</th><th>التاريخ</th></tr></thead>');
+    printWindow.document.write('<tbody>');
+
+    orders.forEach(order => {
+        const date = new Date(order.date);
+        const formattedDate = date.toLocaleDateString('ar-IQ', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        printWindow.document.write('<tr>');
+        printWindow.document.write(`<td>${order.customerNumber || 'غير متوفر'}</td>`);
+        printWindow.document.write(`<td>${order.location}</td>`);
+        printWindow.document.write(`<td>${order.price} دينار</td>`);
+        printWindow.document.write(`<td>${order.orderPrice || 'غير متوفر'} دينار</td>`);
+        printWindow.document.write(`<td>${order.serviceFee} دينار</td>`);
+        printWindow.document.write(`<td>${order.note || 'لا توجد ملاحظات'}</td>`);
+        printWindow.document.write(`<td>${formattedDate}</td>`);
+        printWindow.document.write('</tr>');
+    });
+
+    printWindow.document.write('</tbody></table>');
+    printWindow.document.write('</body></html>');
     printWindow.document.close();
 
-    // انتظار تحميل الصفحة ثم إظهار مربع حوار الطباعة
-    printWindow.onload = function() {
-        printWindow.print();
-    };
+    // طباعة الصفحة
+    printWindow.print();
 }
 
-// دالة لتفعيل DataTable على جدول الطلبات
-function initializeDataTable() {
-    // تدمير الجدول السابق إذا كان موجودًا
-    if (currentDataTable) {
-        currentDataTable.destroy();
+// دالة لتصفية الطلبات
+function filterOrders(filterType) {
+    if (!currentRestaurant) return;
+
+    const ordersKey = `${currentRestaurant.name}_orders`;
+    let orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+    let filteredOrders = [];
+
+    // تحويل جميع التواريخ النصية إلى كائنات Date
+    orders = orders.map(order => {
+        if (typeof order.date === 'string') {
+            order.date = new Date(order.date);
+        }
+        return order;
+    });
+
+    const now = new Date();
+
+    switch (filterType) {
+        case 'today':
+            // طلبات اليوم
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            filteredOrders = orders.filter(order => new Date(order.date) >= today);
+            break;
+
+        case 'yesterday':
+            // طلبات الأمس
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            yesterday.setHours(0, 0, 0, 0);
+
+            const dayAfterYesterday = new Date();
+            dayAfterYesterday.setDate(dayAfterYesterday.getDate() - 1);
+            dayAfterYesterday.setHours(23, 59, 59, 999);
+
+            const dayBeforeYesterday = new Date();
+            dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 2);
+            dayBeforeYesterday.setHours(0, 0, 0, 0);
+
+            filteredOrders = orders.filter(order => {
+                const orderDate = new Date(order.date);
+                return orderDate >= dayBeforeYesterday && orderDate <= dayAfterYesterday;
+            });
+            break;
+
+        case 'week':
+            // طلبات الأسبوع
+            const weekStart = new Date();
+            weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+            weekStart.setHours(0, 0, 0, 0);
+            filteredOrders = orders.filter(order => new Date(order.date) >= weekStart);
+            break;
+
+        case 'month':
+            // طلبات الشهر
+            const monthStart = new Date();
+            monthStart.setDate(1);
+            monthStart.setHours(0, 0, 0, 0);
+            filteredOrders = orders.filter(order => new Date(order.date) >= monthStart);
+            break;
+
+        case 'all':
+        default:
+            // جميع الطلبات
+            filteredOrders = orders;
+            break;
     }
 
-    // إنشاء جدول جديد مع تحسينات
-    currentDataTable = $('#ordersTable').DataTable({
-        retrieve: true,
+    // ترتيب الطلبات المصفاة حسب التاريخ تنازلياً (الأحدث أولاً)
+    filteredOrders.sort((a, b) => {
+        return new Date(b.date) - new Date(a.date);
+    });
+
+    // تحديث ملخص الطلبات
+    updateOrdersSummary(filteredOrders);
+
+    // تفريغ جدول الطلبات
+    const ordersList = document.getElementById('ordersList');
+    ordersList.innerHTML = '';
+
+    // إضافة الطلبات المصفاة إلى الجدول مع معرفات فريدة
+    filteredOrders.forEach((order, index) => {
+        const date = new Date(order.date);
+        const formattedDate = date.toLocaleDateString('ar-IQ', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }) + ' ' + date.toLocaleTimeString('ar-IQ', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const row = document.createElement('tr');
+        row.id = `filtered-order-${index}`;
+        row.dataset.date = date.getTime();
+        row.innerHTML = `
+            <td>${order.customerNumber || 'غير متوفر'}</td>
+            <td>${order.location}</td>
+            <td>${order.price} دينار</td>
+            <td>${order.orderPrice || 'غير متوفر'} دينار</td>
+            <td>${order.serviceFee} دينار</td>
+            <td>${order.note || 'لا توجد ملاحظات'}</td>
+            <td data-sort="${date.getTime()}">${formattedDate}</td>
+        `;
+        ordersList.appendChild(row);
+    });
+
+    // تحديث DataTable مع تحسينات
+    if ($.fn.dataTable.isDataTable('#ordersTable')) {
+        $('#ordersTable').DataTable().destroy();
+    }
+
+    $('#ordersTable').DataTable({
         responsive: true,
         language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/ar.json'
+            url: 'https://cdn.datatables.net/plug-ins/1.10.24/i18n/ar.json'
         },
-        pageLength: 10, // عدد الطلبات الظاهرة في كل صفحة
-        lengthMenu: [5, 10, 15, 20, 50, 100], // خيارات أعداد الطلبات للعرض
-        order: [[6, 'desc']], // ترتيب الطلبات حسب التاريخ (العمود السابع) تنازلياً
-        dom: '<"top"flp>rt<"bottom"ip>', // تخصيص موضع عناصر الجدول
+        order: [[6, 'desc']], // ترتيب حسب التاريخ تنازلياً
+        scrollY: '50vh',      // السماح بالتمرير العمودي داخل الجدول
+        scrollCollapse: true, // تقليص ارتفاع الجدول إذا كان عدد الصفوف قليلاً
+        paging: true,         // تفعيل ترقيم الصفحات
+        pageLength: 25,       // عدد الصفوف في كل صفحة
         columnDefs: [
-            { className: "dt-center", targets: "_all" }, // محاذاة كل الخلايا للوسط
-            { className: "all", targets: [1, 6] }, // المنطقة والتاريخ دائما ظاهرين
-            { className: "min-tablet", targets: [0, 2] }, // رقم الزبون والسعر يظهران على الأجهزة اللوحية وما فوق
-            { className: "desktop", targets: [3, 4, 5] } // باقي العناصر تظهر فقط على سطح المكتب
-        ],
-        drawCallback: function() {
-            // تحسين مظهر عناصر التنقل بين الصفحات
-            $('.dataTables_paginate .paginate_button').addClass('pagination-btn');
-
-            // إضافة رسالة عدد النتائج
-            const info = this.api().page.info();
-            $('.dataTables_info').html(`إجمالي النتائج: <strong>${info.recordsTotal}</strong>`);
-
-            // تحسين مظهر مربع البحث
-            $('.dataTables_filter input').attr('placeholder', 'بحث في الجدول...');
-        }
+            { 
+                targets: 6, // العمود السابع (التاريخ)
+                type: 'date' // تحديد نوع العمود كتاريخ
+            }
+        ]
     });
 }
 
-// دالة لحساب ملخص الطلبات
-function calculateOrderSummary(orders) {
-    const totalOrders = orders.length;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // ضبط الوقت إلى بداية اليوم
-
-    const todayOrders = orders.filter(order => {
-        const orderDate = new Date(order.date);
-        return orderDate >= today;
-    }).length;
-
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() - today.getDay());
-    const weeklyOrders = orders.filter(order => {
-        const orderDate = new Date(order.date);
-        return orderDate >= weekStart;
-    }).length;
-
-    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    const monthlyOrders = orders.filter(order => {
-        const orderDate = new Date(order.date);
-        return orderDate >= monthStart;
-    }).length;
-
-    // حساب مجموع رسوم الخدمة
-    const totalServiceFee = orders.reduce((sum, order) => sum + (parseInt(order.serviceFee) || 0), 0);
-
-    // حساب مجموع رسوم الخدمة
-    const totalServiceFeeSum = orders.reduce((sum, order) => {
-        const serviceFee = parseInt(order.serviceFee) || 0;
-        return sum + serviceFee;
-    }, 0);
-
-    // تحديث البطاقات
-    document.getElementById('totalOrders').textContent = totalOrders;
-    document.getElementById('todayOrders').textContent = todayOrders;
-    document.getElementById('weeklyOrders').textContent = weeklyOrders;
-    document.getElementById('monthlyOrders').textContent = monthlyOrders;
-    document.getElementById('totalDriverFees').textContent = `${totalServiceFeeSum} د.ع`;
-
-    // تحديث مجموع رسوم الخدمة
-    document.getElementById('serviceFeeTotal').textContent = `${totalServiceFee} دينار`;
+// دالة لعرض رسالة نجاح
+function showSuccessMessage(message) {
+    const successMessage = document.getElementById('successMessage');
+    successMessage.textContent = message;
+    successMessage.style.display = 'block';
+    setTimeout(() => {
+        successMessage.style.display = 'none';
+    }, 6000);
 }
 
-// دالة لتسجيل الخروج مع إظهار رسالة تأكيد مخصصة
-function showLogoutConfirmation() {
-    // إظهار نافذة التأكيد المخصصة
-    const modal = document.getElementById('confirmationModal');
-    modal.style.display = 'block';
-
-    const confirmBtn = document.getElementById('confirmLogoutBtn');
-
-    // تعليق أو إزالة تحريك الزر عشوائياً
-    confirmBtn.onmouseover = null; // هذا سيمنع الزر من التحرك
-
-    // عند النقر على زر "نعم" بعد محاولة الوصول إليه
-    confirmBtn.onclick = function() {
-        modal.style.display = 'none';
-        logout(); // استدعاء دالة تسجيل الخروج
-    };
-
-    // عند النقر على زر "لا" لإلغاء تسجيل الخروج
-    document.getElementById('cancelLogoutBtn').onclick = function() {
-        modal.style.display = 'none';
-    };
-}
-
-// دالة لتسجيل الخروج
-function logout() {
-    currentRestaurant = null;
-    localStorage.removeItem('currentRestaurant');
-    document.getElementById('loginContainer').style.display = 'block';
-    document.getElementById('orderContainer').style.display = 'none';
-    showSuccessMessage('تم تسجيل الخروج بنجاح.');
-}
-
-// إعداد مستمعي الأحداث عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', function() {
-    if (currentRestaurant) {
-        initializeOrderPage();
-    }
-
-    // مستمع زر القائمة الجانبية
-    document.getElementById('menuToggle').addEventListener('click', function() {
-        document.getElementById('sideMenu').classList.add('open');
-    });
-
-    // مستمع زر إغلاق القائمة الجانبية
-    document.getElementById('closeSideMenu').addEventListener('click', function() {
-        document.getElementById('sideMenu').classList.remove('open');
-    });
-
-    // مستمع زر تسجيل الدخول
-    document.getElementById('loginBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
-        login(email, password);
-    });
-
-    // مستمع زر إرسال الطلب
-    document.getElementById('submitOrder').addEventListener('click', function(e) {
-        e.preventDefault();
-        handleOrderSubmission();
-    });
-
-    // مستمع زر عرض سجل الطلبات
-    document.getElementById('showOrders').addEventListener('click', function(e) {
-        e.preventDefault();
-        displayOrders('all');
-    });
-
-    // مستمع زر إغلاق نافذة السجل (السفلي)
-    document.getElementById('closeModal').addEventListener('click', function() {
-        document.getElementById('ordersModal').style.display = 'none';
-
-        // إعادة تعيين حقل البحث
-        const searchInput = document.getElementById('orderSearch');
-        if (searchInput) searchInput.value = '';
-    });
-
-    // مستمع زر إغلاق نافذة السجل (العلوي)
-    document.getElementById('closeHeaderBtn').addEventListener('click', function() {
-        document.getElementById('ordersModal').style.display = 'none';
-
-        // إعادة تعيين حقل البحث
-        const searchInput = document.getElementById('orderSearch');
-        if (searchInput) searchInput.value = '';
-    });
-
-    // مستمع زر الإغلاق العائم
-    document.getElementById('floatingCloseBtn').addEventListener('click', function() {
-        document.getElementById('ordersModal').style.display = 'none';
-
-        // إعادة تعيين حقل البحث
-        const searchInput = document.getElementById('orderSearch');
-        if (searchInput) searchInput.value = '';
-    });
-
-    // مستمع حقل البحث في الطلبات
-    document.getElementById('orderSearch')?.addEventListener('input', function() {
-        const query = this.value;
-        searchOrders(query);
-    });
-
-    // مستمع زر تحديث الطلبات
-    document.getElementById('refreshOrders')?.addEventListener('click', function() {
-        displayOrders('all');
-        // إعادة تعيين حقل البحث
-        document.getElementById('orderSearch').value = '';
-    });
-
-    // مستمع زر تصدير الطلبات
-    document.getElementById('exportOrders')?.addEventListener('click', function() {
-        exportToExcel();
-    });
-
-    // مستمع زر طباعة الطلبات
-    document.getElementById('printOrders')?.addEventListener('click', function() {
-        printOrders();
-    });
-
-    // مستمع زر التصفية
-    document.getElementById('filterButton')?.addEventListener('click', function(e) {
-        e.stopPropagation(); // منع انتشار الحدث
-        const filterOptions = document.querySelector('.filter-options');
-        filterOptions.style.display = filterOptions.style.display === 'block' ? 'none' : 'block';
-    });
-
-    // مستمع لإخفاء قائمة التصفية عند النقر خارجها
-    document.addEventListener('click', function() {
-        const filterOptions = document.querySelector('.filter-options');
-        if (filterOptions) {
-            filterOptions.style.display = 'none';
-        }
-    });
-
-    // منع إخفاء قائمة التصفية عند النقر داخلها
-    document.querySelector('.filter-options')?.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
-
-    // مستمع خيارات التصفية
-    document.querySelectorAll('.filter-option')?.forEach(option => {
-        option.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
-            displayOrders(filter);
-            document.querySelector('.filter-options').style.display = 'none';
-        });
-    });
-
-    // مستمع زر تسجيل الخروج مع إظهار رسالة التأكيد المخصصة
-    document.getElementById('logoutBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        showLogoutConfirmation();
-    });
-});
-
-// إضافة وظيفة السحب (drag-to-scroll) لجدول الطلبات
-function enableTableDragScroll() {
-    const tableContainer = document.querySelector('.table-responsive');
-    if (!tableContainer) return;
-
-    let isDown = false;
-    let startX, startY, scrollLeft, scrollTop;
-
-    // بداية السحب
-    tableContainer.addEventListener('mousedown', (e) => {
-        isDown = true;
-        tableContainer.style.cursor = 'grabbing';
-        startX = e.pageX - tableContainer.offsetLeft;
-        startY = e.pageY - tableContainer.offsetTop;
-        scrollLeft = tableContainer.scrollLeft;
-        scrollTop = tableContainer.scrollTop;
-    });
-
-    // الخروج من منطقة السحب
-    tableContainer.addEventListener('mouseleave', () => {
-        isDown = false;
-        tableContainer.style.cursor = 'grab';
-    });
-
-    // نهاية السحب
-    tableContainer.addEventListener('mouseup', () => {
-        isDown = false;
-        tableContainer.style.cursor = 'grab';
-    });
-
-    // أثناء السحب
-    tableContainer.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - tableContainer.offsetLeft;
-        const y = e.pageY - tableContainer.offsetTop;
-        const walkX = (x - startX) * 1.5; // تسريع التمرير الأفقي
-        const walkY = (y - startY) * 1.5; // تسريع التمرير الرأسي
-        tableContainer.scrollLeft = scrollLeft - walkX;
-        tableContainer.scrollTop = scrollTop - walkY;
-    });
-
-    // دعم الأجهزة اللمسية
-    tableContainer.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 1) {
-            isDown = true;
-            startX = e.touches[0].pageX - tableContainer.offsetLeft;
-            startY = e.touches[0].pageY - tableContainer.offsetTop;
-            scrollLeft = tableContainer.scrollLeft;
-            scrollTop = tableContainer.scrollTop;
-        }
-    }, { passive: false });
-
-    tableContainer.addEventListener('touchend', () => {
-        isDown = false;
-    });
-
-    tableContainer.addEventListener('touchmove', (e) => {
-        if (!isDown || e.touches.length !== 1) return;
-        const x = e.touches[0].pageX - tableContainer.offsetLeft;
-        const y = e.touches[0].pageY - tableContainer.offsetTop;
-        const walkX = (x - startX) * 1.5;
-        const walkY = (y - startY) * 1.5;
-        tableContainer.scrollLeft = scrollLeft - walkX;
-        tableContainer.scrollTop = scrollTop - walkY;
-
-        // منع السحب فقط عند وجود تمرير كبير للمحتوى
-        if (Math.abs(walkX) > 10 || Math.abs(walkY) > 10) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-}
-
-// تهيئة نافذة سجل الطلبات وتفعيل خاصية السحب
-function initializeOrdersModal() {
-    // تفعيل وظيفة السحب للتمرير
-    enableTableDragScroll();
-
-    // إضافة خاصية التكبير والتصغير بالإصبعين للأجهزة اللمسية
-    const tableContainer = document.querySelector('.table-responsive');
-    if (tableContainer) {
-        // تحسين مظهر الجدول ليكون قابل للسحب بشكل واضح
-        tableContainer.style.cursor = 'grab';
-        tableContainer.style.overflowY = 'auto';
-        tableContainer.style.maxHeight = '60vh';
-        tableContainer.style.webkitOverflowScrolling = 'touch';
-
-        // إضافة تلميح واضح للمستخدم حول إمكانية السحب
-        const dragHint = document.createElement('div');
-        dragHint.className = 'drag-hint';
-        dragHint.innerHTML = '<i class="fas fa-arrows-alt"></i> اسحب الجدول للأعلى والأسفل لرؤية جميع الطلبات';
-        dragHint.style.textAlign = 'center';
-        dragHint.style.padding = '8px';
-        dragHint.style.margin = '10px 0';
-        dragHint.style.color = '#0056b3';
-        dragHint.style.fontSize = '14px';
-        dragHint.style.backgroundColor = '#f8f9fa';
-        dragHint.style.borderRadius = '5px';
-        dragHint.style.border = '1px solid #ddd';
-
-        // إضافة التلميح قبل الجدول
-        tableContainer.parentNode.insertBefore(dragHint, tableContainer);
-
-        // إخفاء التلميح بعد 8 ثوانٍ
-        setTimeout(() => {
-            dragHint.style.opacity = '0';
-            dragHint.style.transition = 'opacity 1s';
-            setTimeout(() => {
-                dragHint.style.display = 'none';
-            }, 1000);
-        }, 8000);
-    }
-
-    // تفعيل التمرير السلس على الأجهزة اللمسية
+// دالة لتعطيل التمرير في الصفحة الرئيسية مع السماح بالتمرير داخل نافذة سجل الطلبات
+function disablePageScrolling() {
+    document.body.style.overflow = 'hidden';
+    // تأكد من أن نافذة سجل الطلبات يمكن التمرير فيها
     const ordersModalContent = document.querySelector('.orders-modal-content');
     if (ordersModalContent) {
-        ordersModalContent.style.overscrollBehavior = 'contain';
-        ordersModalContent.style.webkitOverflowScrolling = 'touch';
+        ordersModalContent.style.overflowY = 'auto';
+        ordersModalContent.style.maxHeight = '90vh';
     }
 }
 
-// دالة لطباعة الطلبات
-function printOrders() {
-    if (currentOrders.length === 0) {
-        showErrorMessage('لا توجد طلبات للطباعة');
-        return;
-    }
-
-    // تحديد الطلبات التي سيتم طباعتها (الفلترة الحالية أو نتائج البحث)
-    const ordersToPrint = filterOrdersByFilter(currentOrders, currentFilter);
-
-    if (ordersToPrint.length === 0) {
-        showErrorMessage('لا توجد طلبات للطباعة في التصفية الحالية');
-        return;
-    }
-
-    // إنشاء نافذة طباعة جديدة
-    const printWindow = window.open('', '_blank');
-
-    // إنشاء محتوى HTML للطباعة
-    const printContent = `
-        <!DOCTYPE html>
-        <html dir="rtl" lang="ar">
-        <head>
-            <meta charset="UTF-8">
-            <title>طلبات ${currentRestaurant.name}</title>
-            <style>
-                body {
-                    font-family: 'Cairo', 'Arial', sans-serif;
-                    direction: rtl;
-                    padding: 20px;
-                }
-                h1 {
-                    text-align: center;
-                    color: #0056b3;
-                    margin-bottom: 20px;
-                }
-                .print-info {
-                    text-align: center;
-                    margin-bottom: 20px;
-                    font-size: 14px;
-                    color: #666;
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-bottom: 20px;
-                }
-                th, td {
-                    border: 1px solid #ddd;
-                    padding: 8px;
-                    text-align: right;
-                }
-                th {
-                    background-color: #f2f2f2;
-                    font-weight: bold;
-                }
-                tr:nth-child(even) {
-                    background-color: #f9f9f9;
-                }
-                .summary {
-                    margin-top: 30px;
-                    border-top: 2px solid #ddd;
-                    padding-top: 10px;
-                }
-                .summary p {
-                    margin: 5px 0;
-                }
-                @media print {
-                    body {
-                        font-size: 12px;
-                    }
-                    h1 {
-                        font-size: 18px;
-                    }
-                    .print-info {
-                        font-size: 10px;
-                    }
-                }
-            </style>
-        </head>
-        <body>
-            <h1>سجل طلبات ${currentRestaurant.name}</h1>
-            <div class="print-info">
-                <p>التصفية: ${document.getElementById('currentFilter').textContent}</p>
-                <p>تاريخ الطباعة: ${new Date().toLocaleString('ar-IQ')}</p>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>رقم الزبون</th>
-                        <th>المنطقة</th>
-                        <th>السعر</th>
-                        <th>سعر الطلب</th>
-                        <th>رسوم الخدمة</th>
-                        <th>ملاحظة</th>
-                        <th>التاريخ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${ordersToPrint.reverse().map(order => `
-                        <tr>
-                            <td>${order.customerNumber || '-'}</td>
-                            <td>${order.location}</td>
-                            <td>${order.price} دينار</td>
-                            <td>${order.orderPrice} دينار</td>
-                            <td>${order.serviceFee} دينار</td>
-                            <td>${order.note || '-'}</td>
-                            <td>${new Date(order.date).toLocaleString('ar-IQ')}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-
-            <div class="summary">
-                <p><strong>إجمالي عدد الطلبات:</strong> ${ordersToPrint.length}</p>
-                <p><strong>مجموع أجور السائقين:</strong> ${ordersToPrint.reduce((sum, order) => sum + (parseInt(order.price) || 0), 0)} دينار</p>
-                <p><strong>مجموع رسوم الخدمة:</strong> ${ordersToPrint.reduce((sum, order) => sum + (parseInt(order.serviceFee) || 0), 0)} دينار</p>
-            </div>
-        </body>
-        </html>
-    `;
-
-    // كتابة المحتوى في نافذة الطباعة
-    printWindow.document.open();
-    printWindow.document.write(printContent);
-    printWindow.document.close();
-
-    // انتظار تحميل الصفحة ثم إظهار مربع حوار الطباعة
-    printWindow.onload = function() {
-        printWindow.print();
-    };
+// دالة لتمكين التمرير في الصفحة
+function enablePageScrolling() {
+    document.body.style.overflow = 'auto';
 }
 
-// دالة لتفعيل DataTable على جدول الطلبات
-function initializeDataTable() {
-    // تدمير الجدول السابق إذا كان موجودًا
-    if (currentDataTable) {
-        currentDataTable.destroy();
+// إضافة زر تبديل الوضع المظلم
+function addThemeToggle() {
+    // إنشاء زر تبديل الوضع المظلم
+    const themeToggle = document.createElement('div');
+    themeToggle.className = 'theme-toggle';
+    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    document.body.appendChild(themeToggle);
+
+    // التحقق من الوضع المحفوظ في localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
     }
 
-    // إنشاء جدول جديد مع تحسينات
-    currentDataTable = $('#ordersTable').DataTable({
-        retrieve: true,
-        responsive: true,
-        language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/ar.json'
-        },
-        pageLength: 10, // عدد الطلبات الظاهرة في كل صفحة
-        lengthMenu: [5, 10, 15, 20, 50, 100], // خيارات أعداد الطلبات للعرض
-        order: [[6, 'desc']], // ترتيب الطلبات حسب التاريخ (العمود السابع) تنازلياً
-        dom: '<"top"flp>rt<"bottom"ip>', // تخصيص موضع عناصر الجدول
-        columnDefs: [
-            { className: "dt-center", targets: "_all" }, // محاذاة كل الخلايا للوسط
-            { className: "all", targets: [1, 6] }, // المنطقة والتاريخ دائما ظاهرين
-            { className: "min-tablet", targets: [0, 2] }, // رقم الزبون والسعر يظهران على الأجهزة اللوحية وما فوق
-            { className: "desktop", targets: [3, 4, 5] } // باقي العناصر تظهر فقط على سطح المكتب
-        ],
-        drawCallback: function() {
-            // تحسين مظهر عناصر التنقل بين الصفحات
-            $('.dataTables_paginate .paginate_button').addClass('pagination-btn');
-
-            // إضافة رسالة عدد النتائج
-            const info = this.api().page.info();
-            $('.dataTables_info').html(`إجمالي النتائج: <strong>${info.recordsTotal}</strong>`);
-
-            // تحسين مظهر مربع البحث
-            $('.dataTables_filter input').attr('placeholder', 'بحث في الجدول...');
+    // إضافة مستمع حدث للنقر على الزر
+    themeToggle.addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        
+        // حفظ الإعداد في localStorage
+        if (document.body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            localStorage.setItem('theme', 'light');
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
         }
-    });
-}
-
-// دالة لحساب ملخص الطلبات
-function calculateOrderSummary(orders) {
-    const totalOrders = orders.length;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // ضبط الوقت إلى بداية اليوم
-
-    const todayOrders = orders.filter(order => {
-        const orderDate = new Date(order.date);
-        return orderDate >= today;
-    }).length;
-
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() - today.getDay());
-    const weeklyOrders = orders.filter(order => {
-        const orderDate = new Date(order.date);
-        return orderDate >= weekStart;
-    }).length;
-
-    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    const monthlyOrders = orders.filter(order => {
-        const orderDate = new Date(order.date);
-        return orderDate >= monthStart;
-    }).length;
-
-    // حساب مجموع رسوم الخدمة
-    const totalServiceFee = orders.reduce((sum, order) => sum + (parseInt(order.serviceFee) || 0), 0);
-
-    // حساب مجموع رسوم الخدمة
-    const totalServiceFeeSum = orders.reduce((sum, order) => {
-        const serviceFee = parseInt(order.serviceFee) || 0;
-        return sum + serviceFee;
-    }, 0);
-
-    // تحديث البطاقات
-    document.getElementById('totalOrders').textContent = totalOrders;
-    document.getElementById('todayOrders').textContent = todayOrders;
-    document.getElementById('weeklyOrders').textContent = weeklyOrders;
-    document.getElementById('monthlyOrders').textContent = monthlyOrders;
-    document.getElementById('totalDriverFees').textContent = `${totalServiceFeeSum} د.ع`;
-
-    // تحديث مجموع رسوم الخدمة
-    document.getElementById('serviceFeeTotal').textContent = `${totalServiceFee} دينار`;
-}
-
-// دالة لتسجيل الخروج مع إظهار رسالة تأكيد مخصصة
-function showLogoutConfirmation() {
-    // إظهار نافذة التأكيد المخصصة
-    const modal = document.getElementById('confirmationModal');
-    modal.style.display = 'block';
-
-    const confirmBtn = document.getElementById('confirmLogoutBtn');
-
-    // تعليق أو إزالة تحريك الزر عشوائياً
-    confirmBtn.onmouseover = null; // هذا سيمنع الزر من التحرك
-
-    // عند النقر على زر "نعم" بعد محاولة الوصول إليه
-    confirmBtn.onclick = function() {
-        modal.style.display = 'none';
-        logout(); // استدعاء دالة تسجيل الخروج
-    };
-
-    // عند النقر على زر "لا" لإلغاء تسجيل الخروج
-    document.getElementById('cancelLogoutBtn').onclick = function() {
-        modal.style.display = 'none';
-    };
-}
-
-// دالة لتسجيل الخروج
-function logout() {
-    currentRestaurant = null;
-    localStorage.removeItem('currentRestaurant');
-    document.getElementById('loginContainer').style.display = 'block';
-    document.getElementById('orderContainer').style.display = 'none';
-    showSuccessMessage('تم تسجيل الخروج بنجاح.');
-}
-
-// إعداد مستمعي الأحداث عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', function() {
-    if (currentRestaurant) {
-        initializeOrderPage();
-    }
-
-    // مستمع زر القائمة الجانبية
-    document.getElementById('menuToggle').addEventListener('click', function() {
-        document.getElementById('sideMenu').classList.add('open');
-    });
-
-    // مستمع زر إغلاق القائمة الجانبية
-    document.getElementById('closeSideMenu').addEventListener('click', function() {
-        document.getElementById('sideMenu').classList.remove('open');
-    });
-
-    // مستمع زر تسجيل الدخول
-    document.getElementById('loginBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
-        login(email, password);
-    });
-
-    // مستمع زر إرسال الطلب
-    document.getElementById('submitOrder').addEventListener('click', function(e) {
-        e.preventDefault();
-        handleOrderSubmission();
-    });
-
-    // مستمع زر عرض سجل الطلبات
-    document.getElementById('showOrders').addEventListener('click', function(e) {
-        e.preventDefault();
-        displayOrders('all');
-    });
-
-    // مستمع زر إغلاق نافذة السجل (السفلي)
-    document.getElementById('closeModal').addEventListener('click', function() {
-        document.getElementById('ordersModal').style.display = 'none';
-
-        // إعادة تعيين حقل البحث
-        const searchInput = document.getElementById('orderSearch');
-        if (searchInput) searchInput.value = '';
-    });
-
-    // مستمع زر إغلاق نافذة السجل (العلوي)
-    document.getElementById('closeHeaderBtn').addEventListener('click', function() {
-        document.getElementById('ordersModal').style.display = 'none';
-
-        // إعادة تعيين حقل البحث
-        const searchInput = document.getElementById('orderSearch');
-        if (searchInput) searchInput.value = '';
-    });
-
-    // مستمع زر الإغلاق العائم
-    document.getElementById('floatingCloseBtn').addEventListener('click', function() {
-        document.getElementById('ordersModal').style.display = 'none';
-
-        // إعادة تعيين حقل البحث
-        const searchInput = document.getElementById('orderSearch');
-        if (searchInput) searchInput.value = '';
-    });
-
-    // مستمع حقل البحث في الطلبات
-    document.getElementById('orderSearch')?.addEventListener('input', function() {
-        const query = this.value;
-        searchOrders(query);
-    });
-
-    // مستمع زر تحديث الطلبات
-    document.getElementById('refreshOrders')?.addEventListener('click', function() {
-        displayOrders('all');
-        // إعادة تعيين حقل البحث
-        document.getElementById('orderSearch').value = '';
-    });
-
-    // مستمع زر تصدير الطلبات
-    document.getElementById('exportOrders')?.addEventListener('click', function() {
-        exportToExcel();
-    });
-
-    // مستمع زر طباعة الطلبات
-    document.getElementById('printOrders')?.addEventListener('click', function() {
-        printOrders();
-    });
-
-    // مستمع زر التصفية
-    document.getElementById('filterButton')?.addEventListener('click', function(e) {
-        e.stopPropagation(); // منع انتشار الحدث
-        const filterOptions = document.querySelector('.filter-options');
-        filterOptions.style.display = filterOptions.style.display === 'block' ? 'none' : 'block';
-    });
-
-    // مستمع لإخفاء قائمة التصفية عند النقر خارجها
-    document.addEventListener('click', function() {
-        const filterOptions = document.querySelector('.filter-options');
-        if (filterOptions) {
-            filterOptions.style.display = 'none';
-        }
-    });
-
-    // منع إخفاء قائمة التصفية عند النقر داخلها
-    document.querySelector('.filter-options')?.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
-
-    // مستمع خيارات التصفية
-    document.querySelectorAll('.filter-option')?.forEach(option => {
-        option.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
-            displayOrders(filter);
-            document.querySelector('.filter-options').style.display = 'none';
-        });
-    });
-
-    // مستمع زر تسجيل الخروج مع إظهار رسالة التأكيد المخصصة
-    document.getElementById('logoutBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        showLogoutConfirmation();
-    });
-});
-
-// إضافة وظيفة السحب (drag-to-scroll) لجدول الطلبات
-function enableTableDragScroll() {
-    const tableContainer = document.querySelector('.table-responsive');
-    if (!tableContainer) return;
-
-    let isDown = false;
-    let startX, startY, scrollLeft, scrollTop;
-
-    // بداية السحب
-    tableContainer.addEventListener('mousedown', (e) => {
-        isDown = true;
-        tableContainer.style.cursor = 'grabbing';
-        startX = e.pageX - tableContainer.offsetLeft;
-        startY = e.pageY - tableContainer.offsetTop;
-        scrollLeft = tableContainer.scrollLeft;
-        scrollTop = tableContainer.scrollTop;
-    });
-
-    // الخروج من منطقة السحب
-    tableContainer.addEventListener('mouseleave', () => {
-        isDown = false;
-        tableContainer.style.cursor = 'grab';
-    });
-
-    // نهاية السحب
-    tableContainer.addEventListener('mouseup', () => {
-        isDown = false;
-        tableContainer.style.cursor = 'grab';
-    });
-
-    // أثناء السحب
-    tableContainer.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - tableContainer.offsetLeft;
-        const y = e.pageY - tableContainer.offsetTop;
-        const walkX = (x - startX) * 1.5; // تسريع التمرير الأفقي
-        const walkY = (y - startY) * 1.5; // تسريع التمرير الرأسي
-        tableContainer.scrollLeft = scrollLeft - walkX;
-        tableContainer.scrollTop = scrollTop - walkY;
-    });
-
-    // دعم الأجهزة اللمسية
-    tableContainer.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 1) {
-            isDown = true;
-            startX = e.touches[0].pageX - tableContainer.offsetLeft;
-            startY = e.touches[0].pageY - tableContainer.offsetTop;
-            scrollLeft = tableContainer.scrollLeft;
-            scrollTop = tableContainer.scrollTop;
-        }
-    }, { passive: false });
-
-    tableContainer.addEventListener('touchend', () => {
-        isDown = false;
-    });
-
-    tableContainer.addEventListener('touchmove', (e) => {
-        if (!isDown || e.touches.length !== 1) return;
-        const x = e.touches[0].pageX - tableContainer.offsetLeft;
-        const y = e.touches[0].pageY - tableContainer.offsetTop;
-        const walkX = (x - startX) * 1.5;
-        const walkY = (y - startY) * 1.5;
-        tableContainer.scrollLeft = scrollLeft - walkX;
-        tableContainer.scrollTop = scrollTop - walkY;
-
-        // منع السحب فقط عند وجود تمرير كبير للمحتوى
-        if (Math.abs(walkX) > 10 || Math.abs(walkY) > 10) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-}
-
-// تهيئة نافذة سجل الطلبات وتفعيل خاصية السحب
-function initializeOrdersModal() {
-    // تفعيل وظيفة السحب للتمرير
-    enableTableDragScroll();
-
-    // إضافة خاصية التكبير والتصغير بالإصبعين للأجهزة اللمسية
-    const tableContainer = document.querySelector('.table-responsive');
-    if (tableContainer) {
-        // تحسين مظهر الجدول ليكون قابل للسحب بشكل واضح
-        tableContainer.style.cursor = 'grab';
-        tableContainer.style.overflowY = 'auto';
-        tableContainer.style.maxHeight = '60vh';
-        tableContainer.style.webkitOverflowScrolling = 'touch';
-
-        // إضافة تلميح واضح للمستخدم حول إمكانية السحب
-        const dragHint = document.createElement('div');
-        dragHint.className = 'drag-hint';
-        dragHint.innerHTML = '<i class="fas fa-arrows-alt"></i> اسحب الجدول للأعلى والأسفل لرؤية جميع الطلبات';
-        dragHint.style.textAlign = 'center';
-        dragHint.style.padding = '8px';
-        dragHint.style.margin = '10px 0';
-        dragHint.style.color = '#0056b3';
-        dragHint.style.fontSize = '14px';
-        dragHint.style.backgroundColor = '#f8f9fa';
-        dragHint.style.borderRadius = '5px';
-        dragHint.style.border = '1px solid #ddd';
-
-        // إضافة التلميح قبل الجدول
-        tableContainer.parentNode.insertBefore(dragHint, tableContainer);
-
-        // إخفاء التلميح بعد 8 ثوانٍ
+        
+        // تحريك الزر عند النقر
+        this.classList.add('animate__animated', 'animate__rubberBand');
         setTimeout(() => {
-            dragHint.style.opacity = '0';
-            dragHint.style.transition = 'opacity 1s';
-            setTimeout(() => {
-                dragHint.style.display = 'none';
-            }, 1000);
-        }, 8000);
-    }
-
-    // تفعيل التمرير السلس على الأجهزة اللمسية
-    const ordersModalContent = document.querySelector('.orders-modal-content');
-    if (ordersModalContent) {
-        ordersModalContent.style.overscrollBehavior = 'contain';
-        ordersModalContent.style.webkitOverflowScrolling = 'touch';
-    }
-}
-
-// دالة لطباعة الطلبات
-function printOrders() {
-    if (currentOrders.length === 0) {
-        showErrorMessage('لا توجد طلبات للطباعة');
-        return;
-    }
-
-    // تحديد الطلبات التي سيتم طباعتها (الفلترة الحالية أو نتائج البحث)
-    const ordersToPrint = filterOrdersByFilter(currentOrders, currentFilter);
-
-    if (ordersToPrint.length === 0) {
-        showErrorMessage('لا توجد طلبات للطباعة في التصفية الحالية');
-        return;
-    }
-
-    // إنشاء نافذة طباعة جديدة
-    const printWindow = window.open('', '_blank');
-
-    // إنشاء محتوى HTML للطباعة
-    const printContent = `
-        <!DOCTYPE html>
-        <html dir="rtl" lang="ar">
-        <head>
-            <meta charset="UTF-8">
-            <title>طلبات ${currentRestaurant.name}</title>
-            <style>
-                body {
-                    font-family: 'Cairo', 'Arial', sans-serif;
-                    direction: rtl;
-                    padding: 20px;
-                }
-                h1 {
-                    text-align: center;
-                    color: #0056b3;
-                    margin-bottom: 20px;
-                }
-                .print-info {
-                    text-align: center;
-                    margin-bottom: 20px;
-                    font-size: 14px;
-                    color: #666;
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-bottom: 20px;
-                }
-                th, td {
-                    border: 1px solid #ddd;
-                    padding: 8px;
-                    text-align: right;
-                }
-                th {
-                    background-color: #f2f2f2;
-                    font-weight: bold;
-                }
-                tr:nth-child(even) {
-                    background-color: #f9f9f9;
-                }
-                .summary {
-                    margin-top: 30px;
-                    border-top: 2px solid #ddd;
-                    padding-top: 10px;
-                }
-                .summary p {
-                    margin: 5px 0;
-                }
-                @media print {
-                    body {
-                        font-size: 12px;
-                    }
-                    h1 {
-                        font-size: 18px;
-                    }
-                    .print-info {
-                        font-size: 10px;
-                    }
-                }
-            </style>
-        </head>
-        <body>
-            <h1>سجل طلبات ${currentRestaurant.name}</h1>
-            <div class="print-info">
-                <p>التصفية: ${document.getElementById('currentFilter').textContent}</p>
-                <p>تاريخ الطباعة: ${new Date().toLocaleString('ar-IQ')}</p>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>رقم الزبون</th>
-                        <th>المنطقة</th>
-                        <th>السعر</th>
-                        <th>سعر الطلب</th>
-                        <th>رسوم الخدمة</th>
-                        <th>ملاحظة</th>
-                        <th>التاريخ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${ordersToPrint.reverse().map(order => `
-                        <tr>
-                            <td>${order.customerNumber || '-'}</td>
-                            <td>${order.location}</td>
-                            <td>${order.price} دينار</td>
-                            <td>${order.orderPrice} دينار</td>
-                            <td>${order.serviceFee} دينار</td>
-                            <td>${order.note || '-'}</td>
-                            <td>${new Date(order.date).toLocaleString('ar-IQ')}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-
-            <div class="summary">
-                <p><strong>إجمالي عدد الطلبات:</strong> ${ordersToPrint.length}</p>
-                <p><strong>مجموع أجور السائقين:</strong> ${ordersToPrint.reduce((sum, order) => sum + (parseInt(order.price) || 0), 0)} دينار</p>
-                <p><strong>مجموع رسوم الخدمة:</strong> ${ordersToPrint.reduce((sum, order) => sum + (parseInt(order.serviceFee) || 0), 0)} دينار</p>
-            </div>
-        </body>
-        </html>
-    `;
-
-    // كتابة المحتوى في نافذة الطباعة
-    printWindow.document.open();
-    printWindow.document.write(printContent);
-    printWindow.document.close();
-
-    // انتظار تحميل الصفحة ثم إظهار مربع حوار الطباعة
-    printWindow.onload = function() {
-        printWindow.print();
-    };
-}
-
-// دالة لتفعيل DataTable على جدول الطلبات
-function initializeDataTable() {
-    // تدمير الجدول السابق إذا كان موجودًا
-    if (currentDataTable) {
-        currentDataTable.destroy();
-    }
-
-    // إنشاء جدول جديد مع تحسينات
-    currentDataTable = $('#ordersTable').DataTable({
-        retrieve: true,
-        responsive: true,
-        language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/ar.json'
-        },
-        pageLength: 10, // عدد الطلبات الظاهرة في كل صفحة
-        lengthMenu: [5, 10, 15, 20, 50, 100], // خيارات أعداد الطلبات للعرض
-        order: [[6, 'desc']], // ترتيب الطلبات حسب التاريخ (العمود السابع) تنازلياً
-        dom: '<"top"flp>rt<"bottom"ip>', // تخصيص موضع عناصر الجدول
-        columnDefs: [
-            { className: "dt-center", targets: "_all" }, // محاذاة كل الخلايا للوسط
-            { className: "all", targets: [1, 6] }, // المنطقة والتاريخ دائما ظاهرين
-            { className: "min-tablet", targets: [0, 2] }, // رقم الزبون والسعر يظهران على الأجهزة اللوحية وما فوق
-            { className: "desktop", targets: [3, 4, 5] } // باقي العناصر تظهر فقط على سطح المكتب
-        ],
-        drawCallback: function() {
-            // تحسين مظهر عناصر التنقل بين الصفحات
-            $('.dataTables_paginate .paginate_button').addClass('pagination-btn');
-
-            // إضافة رسالة عدد النتائج
-            const info = this.api().page.info();
-            $('.dataTables_info').html(`إجمالي النتائج: <strong>${info.recordsTotal}</strong>`);
-
-            // تحسين مظهر مربع البحث
-            $('.dataTables_filter input').attr('placeholder', 'بحث في الجدول...');
-        }
+            this.classList.remove('animate__animated', 'animate__rubberBand');
+        }, 1000);
     });
 }
 
-// دالة لحساب ملخص الطلبات
-function calculateOrderSummary(orders) {
-    const totalOrders = orders.length;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // ضبط الوقت إلى بداية اليوم
-
-    const todayOrders = orders.filter(order => {
-        const orderDate = new Date(order.date);
-        return orderDate >= today;
-    }).length;
-
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() - today.getDay());
-    const weeklyOrders = orders.filter(order => {
-        const orderDate = new Date(order.date);
-        return orderDate >= weekStart;
-    }).length;
-
-    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    const monthlyOrders = orders.filter(order => {
-        const orderDate = new Date(order.date);
-        return orderDate >= monthStart;
-    }).length;
-
-    // حساب مجموع رسوم الخدمة
-    const totalServiceFee = orders.reduce((sum, order) => sum + (parseInt(order.serviceFee) || 0), 0);
-
-    // حساب مجموع رسوم الخدمة
-    const totalServiceFeeSum = orders.reduce((sum, order) => {
-        const serviceFee = parseInt(order.serviceFee) || 0;
-        return sum + serviceFee;
-    }, 0);
-
-    // تحديث البطاقات
-    document.getElementById('totalOrders').textContent = totalOrders;
-    document.getElementById('todayOrders').textContent = todayOrders;
-    document.getElementById('weeklyOrders').textContent = weeklyOrders;
-    document.getElementById('monthlyOrders').textContent = monthlyOrders;
-    document.getElementById('totalDriverFees').textContent = `${totalServiceFeeSum} د.ع`;
-
-    // تحديث مجموع رسوم الخدمة
-    document.getElementById('serviceFeeTotal').textContent = `${totalServiceFee} دينار`;
-}
-
-// دالة لتسجيل الخروج مع إظهار رسالة تأكيد مخصصة
-function showLogoutConfirmation() {
-    // إظهار نافذة التأكيد المخصصة
-    const modal = document.getElementById('confirmationModal');
-    modal.style.display = 'block';
-
-    const confirmBtn = document.getElementById('confirmLogoutBtn');
-
-    // تعليق أو إزالة تحريك الزر عشوائياً
-    confirmBtn.onmouseover = null; // هذا سيمنع الزر من التحرك
-
-    // عند النقر على زر "نعم" بعد محاولة الوصول إليه
-    confirmBtn.onclick = function() {
-        modal.style.display = 'none';
-        logout(); // استدعاء دالة تسجيل الخروج
-    };
-
-    // عند النقر على زر "لا" لإلغاء تسجيل الخروج
-    document.getElementById('cancelLogoutBtn').onclick = function() {
-        modal.style.display = 'none';
-    };
-}
-
-// دالة لتسجيل الخروج
-function logout() {
-    currentRestaurant = null;
-    localStorage.removeItem('currentRestaurant');
-    document.getElementById('loginContainer').style.display = 'block';
-    document.getElementById('orderContainer').style.display = 'none';
-    showSuccessMessage('تم تسجيل الخروج بنجاح.');
-}
-
-// إعداد مستمعي الأحداث عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', function() {
-    if (currentRestaurant) {
-        initializeOrderPage();
-    }
-
-    // مستمع زر القائمة الجانبية
-    document.getElementById('menuToggle').addEventListener('click', function() {
-        document.getElementById('sideMenu').classList.add('open');
+// تنشيط التأثيرات المرئية
+function initializeAnimations() {
+    // إضافة الفئات المناسبة للعناصر
+    const formGroups = document.querySelectorAll('.form-group');
+    formGroups.forEach((group, index) => {
+        group.classList.add('stagger-item');
+        group.classList.add(`stagger-delay-${index + 1}`);
+        
+        // تحريك العنصر بعد تأخير
+        setTimeout(() => {
+            group.classList.add('animated');
+        }, 100 * index);
     });
-
-    // مستمع زر إغلاق القائمة الجانبية
-    document.getElementById('closeSideMenu').addEventListener('click', function() {
-        document.getElementById('sideMenu').classList.remove('open');
-    });
-
-    // مستمع زر تسجيل الدخول
-    document.getElementById('loginBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
-        login(email, password);
-    });
-
-    // مستمع زر إرسال الطلب
-    document.getElementById('submitOrder').addEventListener('click', function(e) {
-        e.preventDefault();
-        handleOrderSubmission();
-    });
-
-    // مستمع زر عرض سجل الطلبات
-    document.getElementById('showOrders').addEventListener('click', function(e) {
-        e.preventDefault();
-        displayOrders('all');
-    });
-
-    // مستمع زر إغلاق نافذة السجل (السفلي)
-    document.getElementById('closeModal').addEventListener('click', function() {
-        document.getElementById('ordersModal').style.display = 'none';
-
-        // إعادة تعيين حقل البحث
-        const searchInput = document.getElementById('orderSearch');
-        if (searchInput) searchInput.value = '';
-    });
-
-    // مستمع زر إغلاق نافذة السجل (العلوي)
-    document.getElementById('closeHeaderBtn').addEventListener('click', function() {
-        document.getElementById('ordersModal').style.display = 'none';
-
-        // إعادة تعيين حقل البحث
-        const searchInput = document.getElementById('orderSearch');
-        if (searchInput) searchInput.value = '';
-    });
-
-    // مستمع زر الإغلاق العائم
-    document.getElementById('floatingCloseBtn').addEventListener('click', function() {
-        document.getElementById('ordersModal').style.display = 'none';
-
-        // إعادة تعيين حقل البحث
-        const searchInput = document.getElementById('orderSearch');
-        if (searchInput) searchInput.value = '';
-    });
-
-    // مستمع حقل البحث في الطلبات
-    document.getElementById('orderSearch')?.addEventListener('input', function() {
-        const query = this.value;
-        searchOrders(query);
-    });
-
-    // مستمع زر تحديث الطلبات
-    document.getElementById('refreshOrders')?.addEventListener('click', function() {
-        displayOrders('all');
-        // إعادة تعيين حقل البحث
-        document.getElementById('orderSearch').value = '';
-    });
-
-    // مستمع زر تصدير الطلبات
-    document.getElementById('exportOrders')?.addEventListener('click', function() {
-        exportToExcel();
-    });
-
-    // مستمع زر طباعة الطلبات
-    document.getElementById('printOrders')?.addEventListener('click', function() {
-        printOrders();
-    });
-
-    // مستمع زر التصفية
-    document.getElementById('filterButton')?.addEventListener('click', function(e) {
-        e.stopPropagation(); // منع انتشار الحدث
-        const filterOptions = document.querySelector('.filter-options');
-        filterOptions.style.display = filterOptions.style.display === 'block' ? 'none' : 'block';
-    });
-
-    // مستمع لإخفاء قائمة التصفية عند النقر خارجها
-    document.addEventListener('click', function() {
-        const filterOptions = document.querySelector('.filter-options');
-        if (filterOptions) {
-            filterOptions.style.display = 'none';
-        }
-    });
-
-    // منع إخفاء قائمة التصفية عند النقر داخلها
-    document.querySelector('.filter-options')?.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
-
-    // مستمع خيارات التصفية
-    document.querySelectorAll('.filter-option')?.forEach(option => {
-        option.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
-            displayOrders(filter);
-            document.querySelector('.filter-options').style.display = 'none';
+    
+    // تطبيق hover effects على الأزرار
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            this.style.transition = 'all 0.3s ease';
+            this.style.transform = 'translateY(-3px)';
+            this.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.15)';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
         });
     });
+}
 
-    // مستمع زر تسجيل الخروج مع إظهار رسالة التأكيد المخصصة
-    document.getElementById('logoutBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        showLogoutConfirmation();
+// تفعيل Reveal on Scroll
+function initScrollReveal() {
+    // إضافة فئة reveal للعناصر
+    const revealElements = document.querySelectorAll('.container, .form-group, .card');
+    revealElements.forEach(el => {
+        if (!el.classList.contains('stagger-item')) {
+            el.classList.add('reveal');
+        }
     });
+    
+    // دالة التحقق من ظهور العناصر عند التمرير
+    function checkReveal() {
+        const windowHeight = window.innerHeight;
+        const revealThreshold = 150;
+        
+        revealElements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            
+            if (elementTop < windowHeight - revealThreshold) {
+                element.classList.add('active');
+            }
+        });
+    }
+    
+    // تشغيل الدالة عند تحميل الصفحة وعند التمرير
+    window.addEventListener('scroll', checkReveal);
+    window.addEventListener('resize', checkReveal);
+    checkReveal(); // تشغيل الدالة مرة عند تحميل الصفحة
+}
+
+// Micro-interactions للحقول عند التركيز
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        // التأثير عند التركيز
+        input.addEventListener('focus', function() {
+            const label = this.previousElementSibling;
+            if (label && label.tagName === 'LABEL') {
+                label.style.color = 'var(--accent-color)';
+                label.style.transform = 'translateY(-5px)';
+                label.style.transition = 'all 0.3s ease';
+            }
+        });
+        
+        // إعادة الحالة الأصلية عند إزالة التركيز
+        input.addEventListener('blur', function() {
+            const label = this.previousElementSibling;
+            if (label && label.tagName === 'LABEL') {
+                label.style.color = '';
+                label.style.transform = '';
+            }
+        });
+    });
+    
+    // تأثيرات إضافية للأزرار والتنقل
+    animateNavigation();
 });
+
+// تحسين تجربة التنقل بين الصفحات
+function animateNavigation() {
+    // عند النقر على أي زر يؤدي إلى تغيير القسم المرئي
+    const navButtons = document.querySelectorAll('#showOrders, #menuToggle, #closeModal, #logoutBtn');
+    navButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            if (this.id === 'showOrders') {
+                // تأثير ظهور لنافذة سجل الطلبات
+                const modal = document.getElementById('ordersModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    modal.style.opacity = '0';
+                    modal.style.transform = 'scale(0.9)';
+                    
+                    setTimeout(() => {
+                        modal.style.opacity = '1';
+                        modal.style.transform = 'scale(1)';
+                        modal.style.transition = 'all 0.3s ease';
+                    }, 10);
+                }
+            }
+        });
+    });
+    
+    // تأثير النقر على عناصر القائمة الجانبية
+    const sideMenuButtons = document.querySelectorAll('#sideMenu button');
+    sideMenuButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            this.classList.add('animate__animated', 'animate__pulse');
+            setTimeout(() => {
+                this.classList.remove('animate__animated', 'animate__pulse');
+            }, 500);
+        });
+    });
+}
